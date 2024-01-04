@@ -86,7 +86,7 @@ public class DiagnosticCenterController {
     }
 
     @GetMapping("/getDiagnosticCenter")
-    public ResponseEntity<GenericResponse> getAllDiagnosticCenters( @RequestParam(value = "location", required = false) String location,
+    public ResponseEntity<GenericResponse> searchDiagnosticCenter( @RequestParam(value = "location", required = false) String location,
                                                                     @RequestParam(value = "userId", required = false) String userId) {
         HttpStatus httpStatus;
         GetAllDiagnosticCentersResponse response = new GetAllDiagnosticCentersResponse();

@@ -180,8 +180,9 @@ public class UserHandler {
     public LoginUserResponse loginUser(LoginUserRequest request) throws Exception {
         LoginUserResponse response = new LoginUserResponse();
 
-        if ((request.getEmail() == null && request.getPhoneNumber() == null) || (request.getEmail().isEmpty() && request.getPhoneNumber().isEmpty())) {
-            throw new APIException("email and phone number both can't be null/empty");
+        if ((request.getEmail() == null || request.getEmail().isEmpty()) &&
+                (request.getPhoneNumber() == null || request.getPhoneNumber().isEmpty())) {
+            throw new APIException("Either email or phone number must be provided, both can't be null/empty");
         }
         TabStoreUserEntity tabStoreUserEntity = repositoryHandler.loginUser(request);
         if (null != tabStoreUserEntity) {

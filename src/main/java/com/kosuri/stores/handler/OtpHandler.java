@@ -70,21 +70,15 @@ public class OtpHandler {
 
 
     private String getLocationDetails(Optional<List<StoreEntity>> storeDetails) {
-        StringBuilder location = new StringBuilder();
 
         if (storeDetails.isPresent()) {
             for (StoreEntity store : storeDetails.get()) {
                 if (store.getLocation() != null && !store.getLocation().isEmpty()) {
-                    location.append(store.getLocation()).append("; ");
+                    return store.getLocation();
                 }
             }
         }
-
-        if (location.length() > 2) {
-            location.setLength(location.length() - 2);
-        }
-
-        return location.toString();
+        return null;
     }
 
     public boolean sendOtpToPhoneNumber(String phoneNumber) {

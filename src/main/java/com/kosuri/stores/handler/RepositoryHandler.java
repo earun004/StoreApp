@@ -9,6 +9,7 @@ import java.util.Optional;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.kosuri.stores.constant.StoreConstants;
 import com.kosuri.stores.dao.*;
+import com.kosuri.stores.model.enums.Status;
 import com.kosuri.stores.model.enums.UserType;
 import com.kosuri.stores.model.request.*;
 import com.kosuri.stores.model.request.OTPRequest;
@@ -274,7 +275,7 @@ public class RepositoryHandler {
 		Optional<StoreEntity> storeInfoOptional = storeRepository.findById(request.getStoreId());
 		if (storeInfoOptional.isPresent()) {
 			StoreEntity storeEntity = storeInfoOptional.get();
-			return storeEntity.getStatus().equalsIgnoreCase("Active");
+			return storeEntity.getStatus().equalsIgnoreCase(Status.ACTIVE.toString());
 		}
 		return false;
 	}
@@ -291,7 +292,7 @@ public class RepositoryHandler {
 	public boolean isPCActive(PrimaryCareUserRequest request) {
 		Optional<StoreEntity> storeInfoOptional = storeRepository.findById(request.getStoreId());
 		StoreEntity storeEntity = storeInfoOptional.orElse(null);
-		return (Objects.requireNonNull(storeEntity).getStatus().equalsIgnoreCase("true"));
+		return (Objects.requireNonNull(storeEntity).getStatus().equalsIgnoreCase(Status.ACTIVE.toString()));
 
 	}
 
