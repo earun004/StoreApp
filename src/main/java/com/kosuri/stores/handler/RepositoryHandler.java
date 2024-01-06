@@ -2,6 +2,7 @@ package com.kosuri.stores.handler;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -189,33 +190,44 @@ public class RepositoryHandler {
 				System.out.println("User already exists in system");
 				throw new APIException("User already exists in system");
 			}
+			boolean isStoreAdmin = storeAdminCheck(request.getUserType());
+		if (!isStoreAdmin && (request.getStoreAdminEmail() == null || request.getStoreAdminEmail().isEmpty()) &&
+				(request.getStoreAdminMobile() == null || request.getStoreAdminMobile().isEmpty())){
+			throw new APIException("Store Admin Email or Mobile Should be Present For Store User");
+		}
 		return true;
 	}
 
-	public boolean verifyEmailOtp(VerifyOTPRequest verifyOTPRequest) {
+	private boolean storeAdminCheck(String userType) {
+		return userType.equalsIgnoreCase(UserType.SA.toString());
+	}
+
+	public boolean verifyEmailOtp(VerifyOTPRequest verifyOTPRequest) throws APIException{
 		String email = verifyOTPRequest.getEmail();
 		String emailOtp = verifyOTPRequest.getOtp();
-		UserOTPEntity userOtpEntity = userOTPRepository.findByUserEmailAndEmailOtpOrForgetEmailOtp(email,emailOtp);
 
-			if (userOtpEntity != null) {
-				if (verifyOTPRequest.getIsForgetPassword()) {
-                    return userOtpEntity.getActive() != null
-                            && userOtpEntity.getActive() == 1;
-				} else {
-                    if (userOtpEntity.isEmailVerify() || userOtpEntity.getActive() == 1) {
-                        StoreConstants.IS_EMAIL_ALREADY_VERIFIED = true;
-                    }
-                    if (!userOtpEntity.isEmailVerify()) {
-						userOtpEntity.setEmailVerify(true);
-						userOtpEntity.setActive(1);
-						userOtpEntity.setUpdatedOn(LocalTime.now().toString());
-						userOTPRepository.save(userOtpEntity);
-						return true;
-					}
-				}
-			}
-		return false;
-	}
+        UserOTPEntity userOtpEntity = userOTPRepository.findByUserEmailAndEmailOtpOrForgetEmailOtp(email,emailOtp);
+        if (userOtpEntity != null) {
+            if (verifyOTPRequest.getIsForgetPassword()) {
+                return userOtpEntity.getActive() != null
+                        && userOtpEntity.getActive() == 1;
+            } else {
+                if (userOtpEntity.isEmailVerify() || userOtpEntity.getActive() == 1) {
+                    StoreConstants.IS_EMAIL_ALREADY_VERIFIED = true;
+                }
+                if (!userOtpEntity.isEmailVerify()) {
+                    userOtpEntity.setEmailVerify(true);
+                    userOtpEntity.setActive(1);
+                    userOtpEntity.setUpdatedOn(LocalTime.now().toString());
+                    userOTPRepository.save(userOtpEntity);
+                    return true;
+                }
+            }
+        }else{
+			throw new APIException("Invalid Otp");
+		}
+        return false;
+    }
 
 	public boolean verifyPhoneOtp(VerifyOTPRequest verifyOTPRequest) {
 		String phoneOtp = verifyOTPRequest.getOtp();
@@ -271,12 +283,18 @@ public class RepositoryHandler {
 		return (null!=dcEntity);
 	}
 
-	public boolean isDCActive(DiagnosticCenterRequest request) {
+	public boolean isDCActive(DiagnosticCenterRequest request) throws APIException {
+		Optional<TabStoreUserEntity> tabStoreUserEntityOptional = tabStoreRepository.findById(request.getUserId());
+		if(tabStoreUserEntityOptional.isEmpty()){
+			throw new APIException("User Id Does not exists");
+		}
+
 		Optional<StoreEntity> storeInfoOptional = storeRepository.findById(request.getStoreId());
 		if (storeInfoOptional.isPresent()) {
 			StoreEntity storeEntity = storeInfoOptional.get();
 			return storeEntity.getStatus().equalsIgnoreCase(Status.ACTIVE.toString());
 		}
+
 		return false;
 	}
 
@@ -386,4 +404,6 @@ public class RepositoryHandler {
 				findByStoreUserEmailOrStoreUserContact(ownerEmail,ownerContact);
 		return storeUserEntity.isPresent();
 	}
+
+
 }

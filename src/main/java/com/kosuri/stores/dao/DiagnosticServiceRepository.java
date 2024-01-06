@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface DiagnosticServiceRepository extends JpaRepository<DiagnosticServicesEntity, String> {
     List<DiagnosticServicesEntity> findByUserId(String userId);
+
+    DiagnosticServicesEntity findByStoreId(String storeId);
 }

@@ -83,7 +83,7 @@ public class PrimaryCareController {
     }
 
     @GetMapping("/getPrimaryCareCenter")
-    public ResponseEntity<GetAllPrimaryCareCentersResponse> getAllDiagnosticCenters( @RequestParam(value = "location", required = false) String location,
+    public ResponseEntity<GetAllPrimaryCareCentersResponse> getPrimaryCareCenter( @RequestParam(value = "location", required = false) String location,
                                                                     @RequestParam(value = "userId", required = false) String userId) {
         HttpStatus httpStatus;
         GetAllPrimaryCareCentersResponse response = new GetAllPrimaryCareCentersResponse();

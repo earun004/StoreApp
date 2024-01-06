@@ -1,8 +1,10 @@
 package com.kosuri.stores.handler;
 
+import com.kosuri.stores.dao.DiagnosticServicesEntity;
 import com.kosuri.stores.dao.PrimaryCareCenterRepository;
 import com.kosuri.stores.dao.PrimaryCareEntity;
 import com.kosuri.stores.model.request.PrimaryCareUserRequest;
+import com.kosuri.stores.model.response.GetAllDiagnosticCentersResponse;
 import com.kosuri.stores.model.response.GetAllPrimaryCareCentersResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,6 +22,10 @@ private RepositoryHandler  repositoryHandler;
 
 @Autowired
 private PrimaryCareCenterRepository primaryCareCenterRepository;
+
+@Autowired
+private StoreHandler storeHandler;
+
         public boolean addPrimaryCare(PrimaryCareUserRequest request) throws Exception {
         if(!repositoryHandler.isPCActive(request)) {
             return false;
@@ -97,12 +103,31 @@ private PrimaryCareCenterRepository primaryCareCenterRepository;
     }
 
     public GetAllPrimaryCareCentersResponse getPrimaryCareCenterByLocationOrUserId(String location, String userId) {
-            List<PrimaryCareEntity> primaryCareCenters = primaryCareCenterRepository.
-                    findByUserId(userId);
             GetAllPrimaryCareCentersResponse response = new GetAllPrimaryCareCentersResponse();
-            response.setPrimaryCareCenters(primaryCareCenters);
-            return response;
 
+        List<PrimaryCareEntity> primaryCareCenters = new ArrayList<>();
+
+        if (location != null && !location.isEmpty()) {
+            List<String> storeIds = storeHandler.getStoreIdFromLocation(location);
+            getPrimaryCareCentreUsingStoreIds(storeIds, primaryCareCenters);
+            response.setResponseMessage("Diagnostic Centers Fetched Successfully by Location");
+        } else if (userId != null && !userId.isEmpty()) {
+            primaryCareCenters = primaryCareCenterRepository.findByUserId(userId);
+            response.setResponseMessage("Diagnostic Centers Fetched Successfully by User ID");
+        } else {
+            response.setResponseMessage("No location or user ID provided to fetch Diagnostic Centers");
+            return response;
+        }
+        response.setPrimaryCareCenters(primaryCareCenters);
+        return response;
+    }
+
+    private void getPrimaryCareCentreUsingStoreIds(List<String> storeIds,
+                                                   List<PrimaryCareEntity> primaryCareCenters) {
+        for (String storeId: storeIds){
+            PrimaryCareEntity primaryCareCenter = primaryCareCenterRepository.findByStoreId(storeId);
+            primaryCareCenters.add(primaryCareCenter);
+        }
     }
 }
 

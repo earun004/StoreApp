@@ -2,6 +2,7 @@ package com.kosuri.stores.controller;
 
 import com.kosuri.stores.dao.StoreEntity;
 import com.kosuri.stores.exception.APIException;
+import com.kosuri.stores.handler.S3Handler;
 import com.kosuri.stores.handler.StoreHandler;
 import com.kosuri.stores.model.request.CreateStoreRequest;
 import com.kosuri.stores.model.request.UpdateStoreRequest;
@@ -16,13 +17,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/store")
 public class StoreController {
     @Autowired
     private StoreHandler storeHandler;
+
 
     @PostMapping("/create")
     ResponseEntity<CreateStoreResponse> createStore(@Valid @RequestBody CreateStoreRequest request) {
@@ -42,6 +46,8 @@ public class StoreController {
         }
         return ResponseEntity.status(httpStatus).body(createStoreResponse);
     }
+
+
 
     @PostMapping("/update")
     ResponseEntity<UpdateStoreResponse> updateStore(@Valid @RequestBody UpdateStoreRequest request) {

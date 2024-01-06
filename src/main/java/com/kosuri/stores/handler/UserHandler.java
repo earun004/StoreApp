@@ -217,7 +217,7 @@ public class UserHandler {
 
         return storeEntity;
     }
-	public boolean verifyEmailOTP(VerifyOTPRequest emailOtp) {
+	public boolean verifyEmailOTP(VerifyOTPRequest emailOtp) throws APIException {
 		return repositoryHandler.verifyEmailOtp(emailOtp);
 	}
 	public boolean verifySmsOTP(@Valid VerifyOTPRequest smsOtp) {

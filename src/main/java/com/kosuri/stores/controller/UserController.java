@@ -170,7 +170,7 @@ public class UserController {
 	}
 
 	@PostMapping("/verifyEmailOTP")
-	public ResponseEntity<GenericResponse> verifyEmailOTP(@Valid @RequestBody VerifyOTPRequest emailOtp) {
+	public ResponseEntity<GenericResponse> verifyEmailOTP(@Valid @RequestBody VerifyOTPRequest emailOtp) throws APIException{
 		HttpStatus httpStatus;
 		GenericResponse response = new GenericResponse();
 		try {
@@ -181,9 +181,10 @@ public class UserController {
 				response.setResponseMessage("Email Verification Success");
 			} else if(StoreConstants.IS_EMAIL_ALREADY_VERIFIED){
 				response.setResponseMessage("User Already Verified");
-			}else{
-				response.setResponseMessage("Invalid Otp");
 			}
+		} catch (APIException e){
+			httpStatus = HttpStatus.BAD_REQUEST;
+			response.setResponseMessage(e.getMessage());
 		} catch (Exception e) {
 			httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 			response.setResponseMessage("Verification failed.");

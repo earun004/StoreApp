@@ -22,14 +22,15 @@ public class DiagnosticHandler {
     @Autowired
     private DiagnosticServiceRepository diagnosticServiceRepository;
 
+    @Autowired
+    private StoreHandler storeHandler;
+
     public boolean addDiagnosticCenter(DiagnosticCenterRequest request) throws Exception {
-        boolean isDCActive = true;
         if (!repositoryHandler.isDCActive(request)){
-            isDCActive =  false;
             return false;
         }
 
-        DiagnosticServicesEntity diagnosticServicesEntity = getDiagnosticServicesEntityFromDiagnosticRequest(request, isDCActive);
+        DiagnosticServicesEntity diagnosticServicesEntity = getDiagnosticServicesEntityFromDiagnosticRequest(request, true);
         boolean isDcAdded = false;
         try {
            isDcAdded =  repositoryHandler.addDiagnosticCenter(diagnosticServicesEntity,request);
@@ -49,6 +50,7 @@ public class DiagnosticHandler {
         diagnosticServicesEntity.setUserId(request.getUserId());
         diagnosticServicesEntity.setDescription(request.getDescription());
         diagnosticServicesEntity.setUpdatedBy(request.getUserId());
+        diagnosticServicesEntity.setStoreId(request.getStoreId());
         diagnosticServicesEntity.setServiceId(request.getServiceId());
         diagnosticServicesEntity.setUserServiceId(request.getUserId()+"_"+request.getServiceId());
         diagnosticServicesEntity.setStatus(isDCActive?"1":"0");
@@ -77,6 +79,7 @@ public class DiagnosticHandler {
         serviceEntity.setUserId(request.getUserId());
         serviceEntity.setUpdatedBy(request.getUserId());
         serviceEntity.setServiceId(request.getServiceId());
+        serviceEntity.setStoreId(request.getStoreId());
 
         if (request.getPrice() != null && !request.getPrice().equals(serviceEntity.getPrice())) {
             serviceEntity.setPrice(request.getPrice());
@@ -102,14 +105,37 @@ public class DiagnosticHandler {
         GetAllDiagnosticCentersResponse response = new GetAllDiagnosticCentersResponse();
         List<DiagnosticServicesEntity> diagnosticServices = new ArrayList<>();
         diagnosticServiceRepository.findAll().forEach(diagnosticCenter -> diagnosticServices.add(diagnosticCenter));
+        response.setResponseMessage("Diagnostic Centers Fetched SuccessFully");
         response.setDiagnosticCenters(diagnosticServices);
         return response;
     }
-
     public GetAllDiagnosticCentersResponse getDiagnosticCenterByLocationOrUserId(String location, String userId) {
-        List<DiagnosticServicesEntity> diagnosticCenters = diagnosticServiceRepository.findByUserId(userId);
         GetAllDiagnosticCentersResponse response = new GetAllDiagnosticCentersResponse();
+        List<DiagnosticServicesEntity> diagnosticCenters = new ArrayList<>();
+
+        if (location != null && !location.isEmpty()) {
+            List<String> storeIds = storeHandler.getStoreIdFromLocation(location);
+            getDiagnosticServicesEntityUsingStoreIds(storeIds, diagnosticCenters);
+            response.setResponseMessage("Diagnostic Centers Fetched Successfully by Location");
+        } else if (userId != null && !userId.isEmpty()) {
+            diagnosticCenters = diagnosticServiceRepository.findByUserId(userId);
+            response.setResponseMessage("Diagnostic Centers Fetched Successfully by User ID");
+        } else {
+            response.setResponseMessage("No location or user ID provided to fetch Diagnostic Centers");
+            return response;
+        }
         response.setDiagnosticCenters(diagnosticCenters);
         return response;
     }
+
+    private void getDiagnosticServicesEntityUsingStoreIds(List<String> storeIds, List<DiagnosticServicesEntity> diagnosticCenters) {
+        for (String storeId: storeIds){
+            DiagnosticServicesEntity diagnosticCenter = diagnosticServiceRepository.findByStoreId(storeId);
+            diagnosticCenters.add(diagnosticCenter);
+        }
+
+    }
+
+
+
 }

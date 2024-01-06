@@ -25,6 +25,7 @@ public class DiagnosticServicesEntity {
     private @Column(name = "Price") String price;
     private @Column(name = "Description") String description;
     private @Column(name = "UserID") String userId;
+    private @Column(name = "store_id") String storeId;
     private @Column(name = "Service_Category") String serviceCategory;
     private @Column(name = "Updatedby") String updatedBy;
     private @Column(name = "status") String status;

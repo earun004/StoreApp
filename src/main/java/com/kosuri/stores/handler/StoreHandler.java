@@ -40,7 +40,7 @@ public class StoreHandler {
 
     public String addStore(CreateStoreRequest createStoreRequest) throws Exception{
         if(validateStoreInputs(createStoreRequest)) {
-           // uploadFileToS3Bucket(file);
+            //uploadFileToS3Bucket(file);
             StoreEntity storeEntity = repositoryHandler.addStoreToRepository(createStoreEntityFromRequest(createStoreRequest));
 
             if (null != storeEntity){
@@ -84,13 +84,10 @@ public class StoreHandler {
     }
 
     public List<String> getStoreIdFromLocation(String location) {
-        Optional<List<StoreEntity>> entity = storeRepository.findByLocationContaining(location);
+        Optional<List<StoreEntity>> entity = storeRepository.findByLocation(location);
         List<String> stores = new ArrayList<>();
         if (entity.isPresent()) {
             for (StoreEntity store: entity.get()) {
-                if (store.getId().contains("DUMMY")) {
-                    continue;
-                }
                 stores.add(store.getId());
             }
         }
