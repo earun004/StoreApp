@@ -27,14 +27,14 @@ public class SmsHandler {
             String sender = "&sender=" + URLEncoder.encode(appProperties.getSender(), StandardCharsets.UTF_8);
             String numbers = "&numbers=91" + URLEncoder.encode(mobileNumber, StandardCharsets.UTF_8);
 
-            String data = appProperties.getUrl()+apiKey+numbers +encodedMessage+sender;
+            String data = appProperties.getUrl()+apiKey+numbers+encodedMessage+sender;
             HttpURLConnection conn = (HttpURLConnection) new URL(data).openConnection();
+            conn.setRequestMethod("POST");
             conn.setDoOutput(true);
             BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line;
             StringBuilder smsResponse= new StringBuilder();
             while ((line = rd.readLine()) != null) {
-                // Process line...
                 smsResponse.append(line).append(" ");
             }
             rd.close();
