@@ -54,8 +54,8 @@ public class DiagnosticHandler {
         diagnosticServicesEntity.setServiceId(request.getServiceId());
         diagnosticServicesEntity.setUserServiceId(request.getUserId()+"_"+request.getServiceId());
         diagnosticServicesEntity.setStatus(isDCActive?"1":"0");
-        diagnosticServicesEntity.setStatusUpdatedDate(LocalDateTime.now().toString());
-        diagnosticServicesEntity.setAmountUpdatedDate((LocalDateTime.now().toString()));
+        diagnosticServicesEntity.setStatusUpdatedDate(LocalDateTime.now());
+        diagnosticServicesEntity.setAmountUpdatedDate((LocalDateTime.now()));
 
         return diagnosticServicesEntity;
     }
@@ -83,13 +83,13 @@ public class DiagnosticHandler {
 
         if (request.getPrice() != null && !request.getPrice().equals(serviceEntity.getPrice())) {
             serviceEntity.setPrice(request.getPrice());
-            serviceEntity.setAmountUpdatedDate((LocalDateTime.now().toString()));
+            serviceEntity.setAmountUpdatedDate(LocalDateTime.now());
             isUpdated = true;
         }
 
         if (!repositoryHandler.isDCActive(request)) {
             serviceEntity.setStatus(repositoryHandler.isDCActive(request)?"1":"0");
-            serviceEntity.setStatusUpdatedDate(LocalDateTime.now().toString());
+            serviceEntity.setStatusUpdatedDate(LocalDateTime.now());
             isUpdated = true;
         }
 

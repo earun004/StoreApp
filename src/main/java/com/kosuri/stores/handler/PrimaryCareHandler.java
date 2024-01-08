@@ -75,13 +75,13 @@ private StoreHandler storeHandler;
 
         if (request.getPrice() != null && !request.getPrice().equals(serviceEntity.getPrice())) {
             serviceEntity.setPrice(request.getPrice());
-            serviceEntity.setAmountUpdatedDate((LocalDateTime.now().toString()));
+            serviceEntity.setAmountUpdatedDate((LocalDateTime.now()));
             isUpdated = true;
         }
 
         if (!repositoryHandler.isPCActive(request)) {
             serviceEntity.setStatus(repositoryHandler.isPCActive(request)?"1":"0");
-            serviceEntity.setStatusUpdatedDate(LocalDateTime.now().toString());
+            serviceEntity.setStatusUpdatedDate(LocalDateTime.now());
             isUpdated = true;
         }
 

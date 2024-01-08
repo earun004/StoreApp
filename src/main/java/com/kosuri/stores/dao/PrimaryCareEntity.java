@@ -8,6 +8,8 @@ package com.kosuri.stores.dao;
         import lombok.Getter;
         import lombok.Setter;
 
+        import java.time.LocalDateTime;
+
 @Entity
 @Setter
 @Getter
@@ -26,7 +28,7 @@ public class PrimaryCareEntity {
     private @Column(name = "Service_Category") String serviceCategory;
     private @Column(name = "Updatedby") String updatedBy;
     private @Column(name = "status") String status;
-    private @Column(name = "Amount_updated_date") String amountUpdatedDate;
-    private @Column(name = "status_updated_date") String statusUpdatedDate;
+    private @Column(name = "Amount_updated_date") LocalDateTime amountUpdatedDate;
+    private @Column(name = "status_updated_date") LocalDateTime statusUpdatedDate;
 
 }
