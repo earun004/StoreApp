@@ -1,10 +1,11 @@
 package com.kosuri.stores.handler;
 
-import com.kosuri.stores.dao.StoreEntity;
-import com.kosuri.stores.dao.StoreRepository;
+import com.kosuri.stores.config.AWSConfig;
+import com.kosuri.stores.dao.*;
 import com.kosuri.stores.exception.APIException;
 import com.kosuri.stores.model.request.CreateStoreRequest;
 import com.kosuri.stores.model.request.UpdateStoreRequest;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -31,16 +33,19 @@ public class StoreHandler {
     @Autowired
     private OtpHandler otpHandler;
 
-    private final S3Client s3Client;
+    @Autowired
+    private AWSConfig awsConfig;
 
+    @Autowired
+    private TabStoreRepository tabStoreRepository;
 
-    public StoreHandler(S3Client s3Client) {
-        this.s3Client = s3Client;
-    }
+    private static final String BUCKET_NAME = "rxkolan.in";
+
+    
 
     public String addStore(CreateStoreRequest createStoreRequest) throws Exception{
         if(validateStoreInputs(createStoreRequest)) {
-            //uploadFileToS3Bucket(file);
+
             StoreEntity storeEntity = repositoryHandler.addStoreToRepository(createStoreEntityFromRequest(createStoreRequest));
 
             if (null != storeEntity){
@@ -50,26 +55,58 @@ public class StoreHandler {
         return createStoreRequest.getId();
     }
 
-    private void uploadFileToS3Bucket(MultipartFile file) {
-
-        String bucketName = "rxkolan.in";
-        String key = "uploads/" + file.getOriginalFilename(); // or any other key structure you prefer
-
-        try {
-            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(key)
-                    .build();
-            RequestBody requestBody = RequestBody.fromInputStream(file.getInputStream(), file.getSize());
-
-            s3Client.putObject(putObjectRequest, requestBody);
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void uploadFilesAndSaveFileLink(Map<String, MultipartFile> docMap, String storeId) throws APIException {
+        for (Map.Entry<String, MultipartFile> entry : docMap.entrySet()) {
+            MultipartFile file = entry.getValue();
+            String fullPath = entry.getKey();
+        if(uploadFileToS3Bucket(file, fullPath)){
+               AdminStoreVerificationEntity entity =  createAdminStoreVerificationEntity(fullPath, storeId);
+                repositoryHandler.saveAdminStoreVerificationEntity(entity);
+            }
 
         }
     }
+
+    private AdminStoreVerificationEntity createAdminStoreVerificationEntity(String filePath, String storeId) {
+        AdminStoreVerificationEntity entity = new AdminStoreVerificationEntity();
+        entity.setStoreId(storeId);
+        if (filePath != null && filePath.endsWith(".png")) {
+            entity.setDoc1(filePath);
+        }
+        if (filePath != null && filePath.endsWith(".pdf")) {
+            if (entity.getDoc2() == null) {
+                entity.setDoc2(filePath);
+            } else {
+                entity.setDoc3(filePath);
+            }
+        }
+        return entity;
+    }
+    private boolean uploadFileToS3Bucket(MultipartFile file, String fullPath) throws APIException {
+
+        try {
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(BUCKET_NAME)
+                    .key(fullPath)
+                    .contentType(file.getContentType())
+                    .build();
+
+
+            RequestBody requestBody = RequestBody.fromInputStream(file.getInputStream(), file.getSize());
+            S3Client s3Client = awsConfig.s3Client();
+
+            s3Client.putObject(putObjectRequest, requestBody);
+            return true;
+        } catch (Exception e) {
+            throw new APIException("Failed to upload file: ");
+        }
+    }
+
+    public void getStoreFilesByStoreId(String storeId){
+      AdminStoreVerificationEntity adminStoreVerificationEntity = repositoryHandler.getAdminStoreVerification(storeId);
+
+    }
+
 
     public String updateStore(UpdateStoreRequest updateStoreRequest) throws Exception {
         if(validateUpdateStoreInputs(updateStoreRequest)) {
@@ -129,6 +166,7 @@ public class StoreHandler {
         storeEntity.setModifiedDate(LocalDate.now().toString());
         storeEntity.setModifiedTimeStamp(LocalDateTime.now().toString());
         try {
+            setExpirationDateForStore(storeEntity, createStoreRequest.getStoreType());
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             String expirationDateString = createStoreRequest.getExpirationDate();
             LocalDate expirationDate = LocalDate.parse(expirationDateString, formatter);
@@ -148,6 +186,17 @@ public class StoreHandler {
         storeEntity.setStoreVerifiedStatus(createStoreRequest.getStoreVerificationStatus());
 
         return storeEntity;
+    }
+
+    private void setExpirationDateForStore(StoreEntity storeEntity, String storeCategory) {
+        AdminStoreMembershipEntity adminStoreMembershipEntity = repositoryHandler.
+                getStoreVerificationDetails(storeCategory);
+        if (adminStoreMembershipEntity != null && !StringUtils.isEmpty(storeEntity.getRegistrationDate())) {
+            int noOfDays = Integer.parseInt(adminStoreMembershipEntity.getNoOfDays());
+            LocalDate registrationDate = LocalDate.parse(storeEntity.getRegistrationDate());
+            LocalDate expirationDate = registrationDate.plusDays(noOfDays);
+            storeEntity.setExpiryDate(expirationDate.toString());
+        }
     }
 
     private StoreEntity updateStoreEntityFromRequest(UpdateStoreRequest request){
@@ -233,5 +282,54 @@ public class StoreHandler {
             }
         }
         return true;
+    }
+
+
+    public void downloadStoreDocs(String storeId) {
+        AdminStoreVerificationEntity adminStoreVerificationEntity = repositoryHandler.getAdminStoreVerification(storeId);
+        List<String> storeDocFileList = new ArrayList<>();
+        if (adminStoreVerificationEntity != null){
+          storeDocFileList.add(adminStoreVerificationEntity.getDoc1());
+          storeDocFileList.add(adminStoreVerificationEntity.getDoc2());
+          storeDocFileList.add(adminStoreVerificationEntity.getDoc3());
+          storeDocFileList.add(adminStoreVerificationEntity.getDoc4());
+
+        }
+        for (String store:storeDocFileList){
+           awsConfig.downloadFile(BUCKET_NAME, store);
+        }
+    }
+
+    public List<StoreEntity> searchStores(String location, String userId, String storeType, String addedDate) throws APIException{
+
+        List<StoreEntity> stores = new ArrayList<>();
+
+        if (userId != null && !userId.isEmpty()) {
+            Optional<TabStoreUserEntity> storeUser = tabStoreRepository.findById(userId);
+
+            if (storeUser.isPresent()) {
+
+                String ownerEmail = storeUser.get().getStoreUserEmail();
+                if (storeType != null && !storeType.isEmpty()) {
+                    stores = storeRepository.findByOwnerEmailAndType(ownerEmail, storeType);
+                } else {
+                    stores = storeRepository.findByOwnerEmail(ownerEmail).orElse(new ArrayList<>());
+                }
+            }
+        } else if (location != null && !location.isEmpty()) {
+            if (storeType != null && !storeType.isEmpty()) {
+                stores = storeRepository.findByLocationAndType(location, storeType);
+            } else {
+                stores = storeRepository.findByLocation(location).orElse(new ArrayList<>());
+            }
+        } else if (addedDate != null && !addedDate.isEmpty()) {
+
+            stores = storeRepository.findByRegistrationDate(addedDate);
+        } else {
+            throw new APIException("No stores found.");
+        }
+
+        return stores;
+
     }
 }

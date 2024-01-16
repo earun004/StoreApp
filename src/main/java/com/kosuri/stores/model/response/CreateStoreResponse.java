@@ -1,16 +1,12 @@
 package com.kosuri.stores.model.response;
 
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@ToString
 public class CreateStoreResponse extends GenericResponse {
     private String id;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 }

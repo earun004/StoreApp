@@ -130,8 +130,8 @@ public class DiagnosticHandler {
 
     private void getDiagnosticServicesEntityUsingStoreIds(List<String> storeIds, List<DiagnosticServicesEntity> diagnosticCenters) {
         for (String storeId: storeIds){
-            DiagnosticServicesEntity diagnosticCenter = diagnosticServiceRepository.findByStoreId(storeId);
-            diagnosticCenters.add(diagnosticCenter);
+            List<DiagnosticServicesEntity> diagnosticCentersList = diagnosticServiceRepository.findByStoreId(storeId);
+            diagnosticCenters.addAll(diagnosticCentersList);
         }
 
     }

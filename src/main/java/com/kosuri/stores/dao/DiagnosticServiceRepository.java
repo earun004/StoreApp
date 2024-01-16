@@ -10,5 +10,5 @@ import java.util.List;
 public interface DiagnosticServiceRepository extends JpaRepository<DiagnosticServicesEntity, String> {
     List<DiagnosticServicesEntity> findByUserId(String userId);
 
-    DiagnosticServicesEntity findByStoreId(String storeId);
+    List<DiagnosticServicesEntity> findByStoreId(String storeId);
 }

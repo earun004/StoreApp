@@ -9,6 +9,6 @@ import java.util.List;
 public interface PrimaryCareCenterRepository extends JpaRepository<PrimaryCareEntity,String> {
     List<PrimaryCareEntity> findByUserId(String userId);
 
-    PrimaryCareEntity findByStoreId(String storeId);
+    List<PrimaryCareEntity> findByStoreId(String storeId);
 }
 

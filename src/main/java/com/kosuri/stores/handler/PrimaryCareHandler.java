@@ -1,10 +1,8 @@
 package com.kosuri.stores.handler;
 
-import com.kosuri.stores.dao.DiagnosticServicesEntity;
 import com.kosuri.stores.dao.PrimaryCareCenterRepository;
 import com.kosuri.stores.dao.PrimaryCareEntity;
 import com.kosuri.stores.model.request.PrimaryCareUserRequest;
-import com.kosuri.stores.model.response.GetAllDiagnosticCentersResponse;
 import com.kosuri.stores.model.response.GetAllPrimaryCareCentersResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -125,8 +123,8 @@ private StoreHandler storeHandler;
     private void getPrimaryCareCentreUsingStoreIds(List<String> storeIds,
                                                    List<PrimaryCareEntity> primaryCareCenters) {
         for (String storeId: storeIds){
-            PrimaryCareEntity primaryCareCenter = primaryCareCenterRepository.findByStoreId(storeId);
-            primaryCareCenters.add(primaryCareCenter);
+            List<PrimaryCareEntity> primaryCareCenterList = primaryCareCenterRepository.findByStoreId(storeId);
+            primaryCareCenters.addAll(primaryCareCenterList);
         }
     }
 }

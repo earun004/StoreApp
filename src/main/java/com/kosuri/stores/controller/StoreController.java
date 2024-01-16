@@ -2,7 +2,7 @@ package com.kosuri.stores.controller;
 
 import com.kosuri.stores.dao.StoreEntity;
 import com.kosuri.stores.exception.APIException;
-import com.kosuri.stores.handler.S3Handler;
+import com.kosuri.stores.handler.RepositoryHandler;
 import com.kosuri.stores.handler.StoreHandler;
 import com.kosuri.stores.model.request.CreateStoreRequest;
 import com.kosuri.stores.model.request.UpdateStoreRequest;
@@ -12,7 +12,6 @@ import com.kosuri.stores.model.response.UpdateStoreResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +25,9 @@ import java.util.Map;
 public class StoreController {
     @Autowired
     private StoreHandler storeHandler;
+
+    @Autowired
+    private RepositoryHandler repositoryHandler;
 
 
     @PostMapping("/create")
@@ -47,7 +49,65 @@ public class StoreController {
         return ResponseEntity.status(httpStatus).body(createStoreResponse);
     }
 
+    @PostMapping("/upload")
+    ResponseEntity<CreateStoreResponse> uploadStoreDocs(
+            @RequestParam("storeId") String storeId,
+            @RequestParam("storeFrontImage") MultipartFile storeFrontImage,
+            @RequestParam("tradeLicense") MultipartFile tradeLicense,
+            @RequestParam("drugLicense") MultipartFile drugLicense) {
 
+        CreateStoreResponse createStoreResponse = new CreateStoreResponse();
+
+
+        try {
+            if (repositoryHandler.isStorePresent(storeId)){
+                String directoryPath = storeId + "/";
+                Map<String, MultipartFile> docMap = new HashMap<>();
+                String storeFrontImagePath = directoryPath + storeFrontImage.getOriginalFilename();
+                String tradeLicensePath = directoryPath + tradeLicense.getOriginalFilename();
+                String drugLicensePath = directoryPath + drugLicense.getOriginalFilename();
+                docMap.put(storeFrontImagePath, storeFrontImage);
+                docMap.put(tradeLicensePath, tradeLicense);
+                docMap.put(drugLicensePath, drugLicense);
+
+                storeHandler.uploadFilesAndSaveFileLink(docMap, storeId);
+                createStoreResponse.setResponseMessage("Store documents uploaded successfully for StoreId: " + storeId);
+            } else{
+                throw new APIException("Store Not Present");
+            }
+
+            return ResponseEntity.ok(createStoreResponse);
+        } catch (APIException e) {
+            createStoreResponse.setResponseMessage("Error for StoreId " + storeId + ": " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createStoreResponse);
+        } catch (Exception e) {
+            createStoreResponse.setResponseMessage("Internal error for StoreId " + storeId + ": " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(createStoreResponse);
+        }
+    }
+
+    @GetMapping("/downloadFiles")
+    ResponseEntity<CreateStoreResponse> downloadStoreDocs(
+            @RequestParam("storeId") String storeId) {
+
+        CreateStoreResponse createStoreResponse = new CreateStoreResponse();
+        try {
+            if (repositoryHandler.isStorePresent(storeId)){
+                 storeHandler.downloadStoreDocs(storeId);
+                createStoreResponse.setResponseMessage("Store documents downloaded successfully for StoreId: " + storeId);
+            } else{
+                throw new APIException("Store Not Present");
+            }
+
+            return ResponseEntity.ok(createStoreResponse);
+        } catch (APIException e) {
+            createStoreResponse.setResponseMessage("Error for StoreId " + storeId + ": " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createStoreResponse);
+        } catch (Exception e) {
+            createStoreResponse.setResponseMessage("Internal error for StoreId " + storeId + ": " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(createStoreResponse);
+        }
+    }
 
     @PostMapping("/update")
     ResponseEntity<UpdateStoreResponse> updateStore(@Valid @RequestBody UpdateStoreRequest request) {
@@ -76,6 +136,28 @@ public class StoreController {
 
         try{
             List<StoreEntity> stores = storeHandler.getAllStores();
+            getAllStoreResponse.setStores(stores);
+            httpStatus = HttpStatus.OK;
+        } catch (APIException e) {
+            httpStatus = HttpStatus.BAD_REQUEST;
+            getAllStoreResponse.setResponseMessage(e.getMessage());
+        } catch (Exception e) {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            getAllStoreResponse.setResponseMessage(e.getMessage());
+        }
+        return ResponseEntity.status(httpStatus).body(getAllStoreResponse);
+    }
+
+    @GetMapping("/stores")
+    ResponseEntity<GetAllStoreResponse> getAllStoresByUserId(@RequestParam(value = "location", required = false) String location,
+                                                             @RequestParam(value = "userId", required = false) String userId,
+                                                             @RequestParam(value = "store_type", required = false) String storeType,
+                                                             @RequestParam(value = "added_date", required = false) String addedDate) throws APIException{
+        HttpStatus httpStatus;
+        GetAllStoreResponse getAllStoreResponse = new GetAllStoreResponse();
+
+        try{
+            List<StoreEntity> stores = storeHandler.searchStores(location, userId, storeType, addedDate);
             getAllStoreResponse.setStores(stores);
             httpStatus = HttpStatus.OK;
         } catch (APIException e) {

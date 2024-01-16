@@ -10,7 +10,9 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
+import java.io.InputStream;
 import java.util.Optional;
 
 @Configuration
@@ -25,6 +27,8 @@ public class AWSConfig {
 
     @Value("${aws.region}")
     private String region;
+
+    private S3Client s3Client;
 
     @Bean
     public S3Client s3Client() {
@@ -43,5 +47,17 @@ public class AWSConfig {
                 .build();
     }
 
+    public InputStream downloadFile(String bucketName, String fileName) {
+        if (this.s3Client == null) {
+            s3Client();
+        }
+
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(fileName)
+                .build();
+
+        return this.s3Client.getObject(getObjectRequest);
+    }
 
 }

@@ -1,26 +1,22 @@
 package com.kosuri.stores.handler;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.kosuri.stores.constant.StoreConstants;
 import com.kosuri.stores.dao.*;
+import com.kosuri.stores.exception.APIException;
 import com.kosuri.stores.model.enums.Status;
 import com.kosuri.stores.model.enums.UserType;
 import com.kosuri.stores.model.request.*;
-import com.kosuri.stores.model.request.OTPRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.kosuri.stores.exception.APIException;
-
-import jakarta.validation.Valid;
 import org.springframework.util.ObjectUtils;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class RepositoryHandler {
@@ -57,6 +53,12 @@ public class RepositoryHandler {
 
 	@Autowired
 	private PharmacistRepository pharmacistRepository;
+
+	@Autowired
+	private AdminStoreMembershipRepository adminStoreMembershipRepository;
+
+	@Autowired
+	private AdminStoreVerificationRepository adminStoreVerificationRepository;
 
 
 	public StoreEntity addStoreToRepository(@Valid StoreEntity storeEntity) throws Exception {
@@ -389,7 +391,7 @@ public class RepositoryHandler {
 		}
 	}
 
-	public boolean isStorePresent(CreateStoreRequest request) {
+	public  boolean isStorePresent(CreateStoreRequest request) {
 		Optional<StoreEntity> storeEntity = storeRepository.findByPincodeAndDistrictAndStateAndLocation(
 				request.getPincode(),
 				request.getDistrict(),
@@ -399,11 +401,30 @@ public class RepositoryHandler {
 		return storeEntity.isPresent();
 	}
 
+	public  boolean isStorePresent(String storeId) {
+		Optional<StoreEntity> storeEntity = storeRepository.findById(storeId);
+		return storeEntity.isPresent();
+	}
+
 	public boolean isOwnerPresent(String ownerEmail, String ownerContact) {
 		Optional<TabStoreUserEntity> storeUserEntity = tabStoreRepository.
 				findByStoreUserEmailOrStoreUserContact(ownerEmail,ownerContact);
 		return storeUserEntity.isPresent();
 	}
 
+	public AdminStoreMembershipEntity getStoreVerificationDetails(String storeCategory) {
+		Optional<AdminStoreMembershipEntity> adminStoreMembershipEntity=  adminStoreMembershipRepository.
+				findByStoreCategory(storeCategory);
+		return adminStoreMembershipEntity.orElse(null);
+	}
 
+	public AdminStoreVerificationEntity getAdminStoreVerification(String storeId) {
+		Optional<AdminStoreVerificationEntity> adminStoreVerificationEntity=  adminStoreVerificationRepository.
+				findByStoreId(storeId);
+		return adminStoreVerificationEntity.orElse(null);
+	}
+
+	public void saveAdminStoreVerificationEntity(AdminStoreVerificationEntity entity) {
+		adminStoreVerificationRepository.save(entity);
+	}
 }

@@ -18,6 +18,12 @@ public interface StoreRepository extends JpaRepository<StoreEntity, String> {
 
 
     Optional<StoreEntity> findByPincodeAndDistrictAndStateAndLocation(String pincode, String district, String state, String location);
+
+    Optional<StoreEntity> findById(String storeId);
+
+    List<StoreEntity> findByLocationAndType(String location, String type);
+    List<StoreEntity> findByOwnerEmailAndType(String ownerEmail, String type);
+    List<StoreEntity> findByRegistrationDate(String registrationDate);
 }
 
 
