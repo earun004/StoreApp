@@ -148,7 +148,7 @@ public class StoreController {
         return ResponseEntity.status(httpStatus).body(getAllStoreResponse);
     }
 
-    @GetMapping("/stores")
+    @GetMapping("/storeDetails")
     ResponseEntity<GetAllStoreResponse> getAllStoresByUserId(@RequestParam(value = "location", required = false) String location,
                                                              @RequestParam(value = "userId", required = false) String userId,
                                                              @RequestParam(value = "store_type", required = false) String storeType,
