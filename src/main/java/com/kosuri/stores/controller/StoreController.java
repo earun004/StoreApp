@@ -4,6 +4,7 @@ import com.kosuri.stores.dao.StoreEntity;
 import com.kosuri.stores.exception.APIException;
 import com.kosuri.stores.handler.RepositoryHandler;
 import com.kosuri.stores.handler.StoreHandler;
+import com.kosuri.stores.model.request.AdminStoreRequest;
 import com.kosuri.stores.model.request.CreateStoreRequest;
 import com.kosuri.stores.model.request.UpdateStoreRequest;
 import com.kosuri.stores.model.response.CreateStoreResponse;
@@ -11,11 +12,14 @@ import com.kosuri.stores.model.response.GetAllStoreResponse;
 import com.kosuri.stores.model.response.UpdateStoreResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,24 +91,51 @@ public class StoreController {
     }
 
     @GetMapping("/downloadFiles")
-    ResponseEntity<CreateStoreResponse> downloadStoreDocs(
+    private ResponseEntity<byte[]> downloadStoreDocs(
             @RequestParam("storeId") String storeId) {
 
-        CreateStoreResponse createStoreResponse = new CreateStoreResponse();
+
         try {
             if (repositoryHandler.isStorePresent(storeId)){
-                 storeHandler.downloadStoreDocs(storeId);
-                createStoreResponse.setResponseMessage("Store documents downloaded successfully for StoreId: " + storeId);
+                byte[] zipBytes =  storeHandler.downloadStoreDocs(storeId);
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType("application/zip"))
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + storeId + "_documents.zip\"")
+                        .body(zipBytes);
+            } else{
+                throw new APIException("Store Not Present");
+            }
+
+        } catch (APIException e) {
+            String errorMessage = "Error for StoreId " + storeId + ": " + e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(errorMessage.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            String errorMessage = "Internal error for StoreId " + storeId + ": " + e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(errorMessage.getBytes(StandardCharsets.UTF_8));
+        }
+    }
+
+    @PutMapping("/updateStoreDocVerification")
+    ResponseEntity<CreateStoreResponse> updateStoreVerification(@RequestBody AdminStoreRequest adminStoreRequest) {
+        CreateStoreResponse createStoreResponse = new CreateStoreResponse();
+        try {
+            if (repositoryHandler.isStorePresent(adminStoreRequest.getStoreId())){
+                createStoreResponse = storeHandler.updateStoreDocumentVerification(adminStoreRequest);
+                createStoreResponse.setResponseMessage("Store documents Verification successfully for StoreId: " + adminStoreRequest.getStoreId());
             } else{
                 throw new APIException("Store Not Present");
             }
 
             return ResponseEntity.ok(createStoreResponse);
         } catch (APIException e) {
-            createStoreResponse.setResponseMessage("Error for StoreId " + storeId + ": " + e.getMessage());
+            createStoreResponse.setResponseMessage("Error for StoreId " + adminStoreRequest.getStoreId() + ": " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createStoreResponse);
         } catch (Exception e) {
-            createStoreResponse.setResponseMessage("Internal error for StoreId " + storeId + ": " + e.getMessage());
+            createStoreResponse.setResponseMessage("Internal error for StoreId " + adminStoreRequest.getStoreId() + ": " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(createStoreResponse);
         }
     }

@@ -3,24 +3,32 @@ package com.kosuri.stores.handler;
 import com.kosuri.stores.config.AWSConfig;
 import com.kosuri.stores.dao.*;
 import com.kosuri.stores.exception.APIException;
+import com.kosuri.stores.model.request.AdminStoreRequest;
 import com.kosuri.stores.model.request.CreateStoreRequest;
 import com.kosuri.stores.model.request.UpdateStoreRequest;
+import com.kosuri.stores.model.response.CreateStoreResponse;
+import com.kosuri.stores.model.response.StoreDocumentResponse;
 import io.micrometer.common.util.StringUtils;
+import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Service
 public class StoreHandler {
@@ -39,6 +47,9 @@ public class StoreHandler {
     @Autowired
     private TabStoreRepository tabStoreRepository;
 
+    @Autowired
+    private S3Client s3Client;
+
     private static final String BUCKET_NAME = "rxkolan.in";
 
     
@@ -56,50 +67,51 @@ public class StoreHandler {
     }
 
     public void uploadFilesAndSaveFileLink(Map<String, MultipartFile> docMap, String storeId) throws APIException {
-        for (Map.Entry<String, MultipartFile> entry : docMap.entrySet()) {
-            MultipartFile file = entry.getValue();
-            String fullPath = entry.getKey();
-        if(uploadFileToS3Bucket(file, fullPath)){
-               AdminStoreVerificationEntity entity =  createAdminStoreVerificationEntity(fullPath, storeId);
+        if(uploadFileToS3Bucket(docMap)){
+               AdminStoreVerificationEntity entity =  createAdminStoreVerificationEntity(docMap.keySet(), storeId);
                 repositoryHandler.saveAdminStoreVerificationEntity(entity);
-            }
-
         }
     }
 
-    private AdminStoreVerificationEntity createAdminStoreVerificationEntity(String filePath, String storeId) {
+    private AdminStoreVerificationEntity createAdminStoreVerificationEntity(Set<String> filePaths, String storeId) {
+
         AdminStoreVerificationEntity entity = new AdminStoreVerificationEntity();
         entity.setStoreId(storeId);
-        if (filePath != null && filePath.endsWith(".png")) {
-            entity.setDoc1(filePath);
-        }
-        if (filePath != null && filePath.endsWith(".pdf")) {
-            if (entity.getDoc2() == null) {
-                entity.setDoc2(filePath);
-            } else {
-                entity.setDoc3(filePath);
+        for (String filePath : filePaths) {
+            if (filePath != null && (filePath.endsWith(".png")
+                    || filePath.endsWith(".jpg")
+                    || filePath.endsWith(".jpeg"))) {
+                entity.setDoc1(filePath);
+            } else if (filePath != null && filePath.endsWith(".pdf")) {
+                if (entity.getDoc2() == null) {
+                    entity.setDoc2(filePath);
+                } else if (entity.getDoc3() == null) {
+                    entity.setDoc3(filePath);
+                }
             }
         }
         return entity;
     }
-    private boolean uploadFileToS3Bucket(MultipartFile file, String fullPath) throws APIException {
+    private boolean uploadFileToS3Bucket( Map<String, MultipartFile> docMap) throws APIException {
+        for (Map.Entry<String, MultipartFile> entry : docMap.entrySet()) {
+            MultipartFile file = entry.getValue();
+            String fullPath = entry.getKey();
+            try {
+                PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                        .bucket(BUCKET_NAME)
+                        .key(fullPath)
+                        .contentType(file.getContentType())
+                        .build();
 
-        try {
-            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                    .bucket(BUCKET_NAME)
-                    .key(fullPath)
-                    .contentType(file.getContentType())
-                    .build();
 
-
-            RequestBody requestBody = RequestBody.fromInputStream(file.getInputStream(), file.getSize());
-            S3Client s3Client = awsConfig.s3Client();
-
-            s3Client.putObject(putObjectRequest, requestBody);
-            return true;
-        } catch (Exception e) {
-            throw new APIException("Failed to upload file: ");
+                RequestBody requestBody = RequestBody.fromInputStream(file.getInputStream(), file.getSize());
+                S3Client s3Client = awsConfig.s3Client();
+                s3Client.putObject(putObjectRequest, requestBody);
+            } catch (Exception e) {
+                throw new APIException("Failed to upload file: ");
+            }
         }
+        return true;
     }
 
     public void getStoreFilesByStoreId(String storeId){
@@ -285,18 +297,42 @@ public class StoreHandler {
     }
 
 
-    public void downloadStoreDocs(String storeId) {
+    public byte[] downloadStoreDocs(String storeId) throws APIException, IOException {
+        StoreDocumentResponse storeDocumentResponse = new StoreDocumentResponse();
         AdminStoreVerificationEntity adminStoreVerificationEntity = repositoryHandler.getAdminStoreVerification(storeId);
         List<String> storeDocFileList = new ArrayList<>();
         if (adminStoreVerificationEntity != null){
           storeDocFileList.add(adminStoreVerificationEntity.getDoc1());
           storeDocFileList.add(adminStoreVerificationEntity.getDoc2());
           storeDocFileList.add(adminStoreVerificationEntity.getDoc3());
-          storeDocFileList.add(adminStoreVerificationEntity.getDoc4());
-
         }
-        for (String store:storeDocFileList){
-           awsConfig.downloadFile(BUCKET_NAME, store);
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             ZipOutputStream zos = new ZipOutputStream(baos)) {
+
+            for (String fileName : storeDocFileList) {
+                if (fileName != null && !fileName.isEmpty()) {
+                    GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                            .bucket(BUCKET_NAME)
+                            .key(fileName)
+                            .build();
+
+                    // Use try-with-resources to ensure the stream is closed
+                    try (ResponseInputStream<GetObjectResponse> s3Object = s3Client.getObject(getObjectRequest)) {
+                        ZipEntry zipEntry = new ZipEntry(fileName);
+                        zos.putNextEntry(zipEntry);
+                        IOUtils.copy(s3Object, zos); // Use IOUtils from Apache Commons IO
+                        zos.closeEntry();
+                    } catch (Exception e) {
+                        // Log and handle exception...
+                        throw new APIException("Error While Downloading File: " + fileName);
+                    }
+                }
+            }
+            zos.finish();
+            return baos.toByteArray();
+        } catch (IOException e) {
+            // Handle exception...
+            throw new APIException("Error creating zip file.");
         }
     }
 
@@ -331,5 +367,26 @@ public class StoreHandler {
 
         return stores;
 
+    }
+
+    public CreateStoreResponse updateStoreDocumentVerification(AdminStoreRequest adminStoreRequest) throws APIException{
+        CreateStoreResponse response = new CreateStoreResponse();
+        AdminStoreVerificationEntity storeVerificationEntity = repositoryHandler.getAdminStoreVerification(adminStoreRequest.getStoreId());
+        if (storeVerificationEntity != null) {
+
+            storeVerificationEntity.setVerificationStatus(adminStoreRequest.isStoreValid() ? "Verified" : "Rejected");
+            storeVerificationEntity.setComment(adminStoreRequest.getComments());
+            storeVerificationEntity.setVerifiedBy(adminStoreRequest.getVerifiedBy());
+            storeVerificationEntity.setVerificationDate(LocalDateTime.now());
+            if(repositoryHandler.saveAdminStoreVerificationEntity(storeVerificationEntity)){
+
+                response.setId(storeVerificationEntity.getStoreId());
+                response.setResponseMessage("Store verification status updated successfully.");
+                return response;
+            }
+        } else {
+            throw new APIException("Store with ID: " + adminStoreRequest.getStoreId() + " not found.");
+        }
+        return response;
     }
 }

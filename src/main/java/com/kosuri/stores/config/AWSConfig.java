@@ -28,7 +28,7 @@ public class AWSConfig {
     @Value("${aws.region}")
     private String region;
 
-    private S3Client s3Client;
+
 
     @Bean
     public S3Client s3Client() {
@@ -47,17 +47,13 @@ public class AWSConfig {
                 .build();
     }
 
-    public InputStream downloadFile(String bucketName, String fileName) {
-        if (this.s3Client == null) {
-            s3Client();
-        }
-
+    public InputStream downloadFile(String bucketName, String fileName, S3Client s3Client) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
                 .key(fileName)
                 .build();
 
-        return this.s3Client.getObject(getObjectRequest);
+        return s3Client.getObject(getObjectRequest);
     }
 
 }

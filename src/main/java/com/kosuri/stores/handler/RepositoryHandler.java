@@ -424,7 +424,8 @@ public class RepositoryHandler {
 		return adminStoreVerificationEntity.orElse(null);
 	}
 
-	public void saveAdminStoreVerificationEntity(AdminStoreVerificationEntity entity) {
-		adminStoreVerificationRepository.save(entity);
+	public boolean saveAdminStoreVerificationEntity(AdminStoreVerificationEntity entity) {
+		AdminStoreVerificationEntity adminStoreVerification = adminStoreVerificationRepository.save(entity);
+		return true;
 	}
 }
