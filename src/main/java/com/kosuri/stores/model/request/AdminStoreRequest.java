@@ -20,7 +20,7 @@ public class AdminStoreRequest extends RequestEntity<AdminStoreRequest> {
 
     @NotNull
     private String storeId;
-    private boolean isStoreValid;
+    private Boolean isStoreValid;
     private String comments;
     private String verifiedBy;
 

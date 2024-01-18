@@ -374,7 +374,7 @@ public class StoreHandler {
         AdminStoreVerificationEntity storeVerificationEntity = repositoryHandler.getAdminStoreVerification(adminStoreRequest.getStoreId());
         if (storeVerificationEntity != null) {
 
-            storeVerificationEntity.setVerificationStatus(adminStoreRequest.isStoreValid() ? "Verified" : "Rejected");
+            storeVerificationEntity.setVerificationStatus(adminStoreRequest.getIsStoreValid() ? "Verified" : "Rejected");
             storeVerificationEntity.setComment(adminStoreRequest.getComments());
             storeVerificationEntity.setVerifiedBy(adminStoreRequest.getVerifiedBy());
             storeVerificationEntity.setVerificationDate(LocalDateTime.now());
