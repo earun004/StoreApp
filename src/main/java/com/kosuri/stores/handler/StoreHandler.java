@@ -56,7 +56,6 @@ public class StoreHandler {
 
     public String addStore(CreateStoreRequest createStoreRequest) throws Exception{
         if(validateStoreInputs(createStoreRequest)) {
-
             StoreEntity storeEntity = repositoryHandler.addStoreToRepository(createStoreEntityFromRequest(createStoreRequest));
 
             if (null != storeEntity){

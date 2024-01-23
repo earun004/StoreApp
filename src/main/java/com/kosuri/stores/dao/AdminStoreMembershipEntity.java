@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "admin_store_membership")
+@Table(name = "admin_store_membersip")
 public class AdminStoreMembershipEntity {
 
     @Id
@@ -28,6 +28,6 @@ public class AdminStoreMembershipEntity {
     private @Column(name = "comment") String comment;
     private @Column(name = "status") String status;
     private @Column(name = "status_update_date") LocalDateTime statusUpdateDate;
-    private @Column(name = "price_update_date") LocalDateTime priceUpdateDate;
+    private @Column(name = "price_updated_date") LocalDateTime priceUpdateDate;
     private @Column(name = "planid_storecategory") String planIdStoreCategory;
 }
