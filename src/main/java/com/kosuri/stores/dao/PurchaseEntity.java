@@ -58,9 +58,10 @@ public class PurchaseEntity {
     private @Column(name = "Sgst") Integer sGSTPer;
     private @Column(name = "Cgst_Amt") Double cGSTAmt;
     private @Column(name = "Sgst_Amt") Double sGSTAmt;
-    private @Column(name = "Igst") Integer iGSTPer;
+    private @Column(name = "Igst") Double iGSTPer;
+    private @Column(name = "igst_amt") Double iGSTAmt;
     private @Column(name = "Total") Double total;
-    private @Column(name = "Post") Integer post;
+    private @Column(name = "Post") Double post;
     private @Column(name = "Item_Category") String itemCat;
     private @Column(name = "Cess_Per") Integer cessPer;
     private @Column(name = "Cess_Amt") Double cessAmt;

@@ -39,7 +39,6 @@ public class StoreController {
         CreateStoreResponse createStoreResponse = new CreateStoreResponse();
         HttpStatus httpStatus;
         try {
-
             createStoreResponse.setId(storeHandler.addStore(request));
             createStoreResponse.setResponseMessage("Store Added successfully!");
             httpStatus = HttpStatus.OK;
