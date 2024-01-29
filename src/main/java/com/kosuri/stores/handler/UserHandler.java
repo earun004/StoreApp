@@ -11,7 +11,6 @@ import com.kosuri.stores.model.response.GenericResponse;
 import com.kosuri.stores.model.response.LoginUserResponse;
 
 import io.micrometer.common.util.StringUtils;
-import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -220,10 +219,10 @@ public class UserHandler {
 	public boolean verifyEmailOTP(VerifyOTPRequest emailOtp) throws APIException {
 		return repositoryHandler.verifyEmailOtp(emailOtp);
 	}
-	public boolean verifySmsOTP(@Valid VerifyOTPRequest smsOtp) {
+	public boolean verifySmsOTP(VerifyOTPRequest smsOtp) {
 		 return repositoryHandler.verifyPhoneOtp(smsOtp);
 	}
-	public boolean sendEmailOtp(@Valid OTPRequest request) {
+	public boolean sendEmailOtp(OTPRequest request) {
 		return repositoryHandler.sendEmailOtp(request);
 	}
 

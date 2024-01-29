@@ -1,10 +1,11 @@
 package com.kosuri.stores.dao;
 //
+
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,13 +18,13 @@ import lombok.ToString;
 public class StoreEntity {
     private @Column(name = "Store_Category") String type;
     @Id
-    @NotNull
+    @Nonnull
     private @Column(name = "Store_ID") String id;
     private @Column(name = "Store_Name") String name;
     private @Column(name = "Pincode") String pincode;
     private @Column(name = "Village") String district;
     private @Column(name = "State") String state;
-    @NotNull
+    @Nonnull
     private @Column(name = "Location") String location;
     private @Column(name = "Contact_Person_Name") String owner;
     private @Column(name = "Phone_Number") String ownerContact;

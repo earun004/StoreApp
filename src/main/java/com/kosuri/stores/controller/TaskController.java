@@ -1,26 +1,15 @@
 package com.kosuri.stores.controller;
 
-import com.kosuri.stores.dao.TaskEntity;
 import com.kosuri.stores.exception.APIException;
 import com.kosuri.stores.handler.RepositoryHandler;
 import com.kosuri.stores.handler.TaskHandler;
 import com.kosuri.stores.model.request.AddTaskRequest;
-import com.kosuri.stores.model.request.GetTasksForRoleRequest;
 import com.kosuri.stores.model.request.MapTaskForRoleRequest;
-import com.kosuri.stores.model.response.GenericResponse;
 import com.kosuri.stores.model.response.AddTaskResponse;
+import com.kosuri.stores.model.response.GenericResponse;
 import com.kosuri.stores.model.response.GetAllTasksResponse;
-import com.kosuri.stores.model.response.GetTasksForRoleResponse;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-
-
-import java.io.IOException;
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +35,7 @@ public class TaskController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<AddTaskResponse> addTask(@Valid @RequestBody AddTaskRequest request){
+    public ResponseEntity<AddTaskResponse> addTask(@RequestBody AddTaskRequest request){
         AddTaskResponse response = new AddTaskResponse();
         try {
             response = taskHandler.addTask(request);
@@ -61,7 +50,7 @@ public class TaskController {
     }
 
     @PostMapping("/map")
-    public ResponseEntity<GenericResponse> mapTaskRoleEntityFromRequest(@Valid @RequestBody MapTaskForRoleRequest request) {
+    public ResponseEntity<GenericResponse> mapTaskRoleEntityFromRequest(@RequestBody MapTaskForRoleRequest request) {
         GenericResponse response = new GenericResponse();
         try {
             taskHandler.mapTaskRoleEntityFromRequest(request);

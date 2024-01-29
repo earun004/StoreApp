@@ -4,7 +4,6 @@ import com.kosuri.stores.handler.PrimaryCareHandler;
 import com.kosuri.stores.model.request.*;
 import com.kosuri.stores.model.response.GenericResponse;
 import com.kosuri.stores.model.response.GetAllPrimaryCareCentersResponse;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +18,7 @@ public class PrimaryCareController {
 
 
     @PostMapping("/addPrimaryCareCenter")
-    public ResponseEntity<GenericResponse> addPrimaryCare(@Valid @RequestBody PrimaryCareUserRequest request) {
+    public ResponseEntity<GenericResponse> addPrimaryCare(@RequestBody PrimaryCareUserRequest request) {
 
         HttpStatus httpStatus;
         GenericResponse response = new GenericResponse();
@@ -47,7 +46,7 @@ public class PrimaryCareController {
     }
 
     @PutMapping("/updatePrimaryCareCenter")
-    public ResponseEntity<GenericResponse> updateDiagnosticCenter(@Valid @RequestBody PrimaryCareUserRequest request) {
+    public ResponseEntity<GenericResponse> updateDiagnosticCenter(@RequestBody PrimaryCareUserRequest request) {
         HttpStatus httpStatus;
         GenericResponse response = new GenericResponse();
         try {

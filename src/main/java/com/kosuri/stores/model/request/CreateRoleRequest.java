@@ -1,9 +1,8 @@
 package com.kosuri.stores.model.request;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
-
 
 import java.net.URI;
 
@@ -13,9 +12,9 @@ public class CreateRoleRequest extends RequestEntity<CreateRoleRequest> {
         super(method, url);
     }
 
-    @NotNull
+    @Nonnull
     private String roleId;
-    @NotNull
+    @Nonnull
     private String roleName;
     public String getRoleId() {
         return roleId;

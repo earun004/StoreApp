@@ -1,10 +1,10 @@
 package com.kosuri.stores.dao;
 
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +20,7 @@ public class DiagnosticServicesEntity {
     @Id
     private @Column(name="user_service_id") String userServiceId;
 
-    @NotNull
+    @Nonnull
     private @Column(name = "ServiceID") String serviceId; // "BLOO1"
 
     private @Column(name = "Service_Name") String serviceName;

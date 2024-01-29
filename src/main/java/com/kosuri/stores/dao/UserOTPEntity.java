@@ -1,10 +1,10 @@
 package com.kosuri.stores.dao;
 
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +16,7 @@ import java.util.Date;
 @Table(name = "user_otp")
 public class UserOTPEntity {
 	@Id
-	@NotNull
+	@Nonnull
 	private @Column(name = "user_id") String userOtpId;
 	private @Column(name = "active") Integer active;
 	private @Column(name = "created_on") String createdOn;

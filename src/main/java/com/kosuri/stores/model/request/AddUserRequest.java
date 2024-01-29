@@ -1,8 +1,6 @@
 package com.kosuri.stores.model.request;
 
-import com.kosuri.stores.model.enums.Role;
-import jakarta.validation.constraints.NotNull;
-import org.springframework.boot.convert.DataSizeUnit;
+import jakarta.annotation.Nonnull;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 
@@ -13,17 +11,17 @@ public class AddUserRequest extends RequestEntity<AddUserRequest> {
         super(method, url);
     }
 
-    @NotNull
+    @Nonnull
     private String name;
-    @NotNull
+    @Nonnull
     private String address;
-    @NotNull
+    @Nonnull
     private String phoneNumber;
-    @NotNull
+    @Nonnull
     private String email;
-    @NotNull
+    @Nonnull
     private String role;
-    @NotNull
+    @Nonnull
     private String password;
 
     public String getName() {

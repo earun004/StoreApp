@@ -1,15 +1,16 @@
 package com.kosuri.stores.dao;
 
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import javax.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.time.LocalDateTime;
 @Getter
 @Setter
@@ -20,12 +21,13 @@ public class TabStoreUserEntity {
     private @Column(name = "store_category") String type;
 
 	@Id
-	@NotNull
+    @Nonnull
 	private @Column(name = "user_id") String userId;
     private @Column(name = "store_user_full_name") String name;
-    @NotNull
+
+    @Nonnull
     private @Column(name = "store_user_phonenumber", unique=true) String storeUserContact;
-    @NotNull
+    @Nonnull
     private @Column(name = "store_user_emailid", unique = true) String storeUserEmail;
 
 	@Column(name = "registraion_date")

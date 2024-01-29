@@ -1,10 +1,10 @@
 package com.kosuri.stores.dao;
 
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,10 +15,10 @@ import lombok.Setter;
 public class ServiceCategoryEntity {
 
 	@Id
-	@NotNull
+	@Nonnull
 	private @Column(name = "service_id") String serviceId;
 
-	@NotNull
+	@Nonnull
 	private @Column(name = "service_name") String serviceName;
 
 	private @Column(name = "register_date") String registeredDate;

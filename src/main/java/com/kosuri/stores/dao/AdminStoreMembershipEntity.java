@@ -1,10 +1,10 @@
 package com.kosuri.stores.dao;
 
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class AdminStoreMembershipEntity {
 
     @Id
-    @NotNull
+    @Nonnull
     private @Column(name = "plan_id") String planId;
     private @Column(name = "price_per_user") Integer pricePerUser;
     private @Column(name = "store_category", unique = true) String storeCategory;

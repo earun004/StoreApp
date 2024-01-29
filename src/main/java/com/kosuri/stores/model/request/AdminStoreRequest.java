@@ -1,6 +1,6 @@
 package com.kosuri.stores.model.request;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -18,7 +18,7 @@ public class AdminStoreRequest extends RequestEntity<AdminStoreRequest> {
         super(method, url);
     }
 
-    @NotNull
+    @Nonnull
     private String storeId;
     private Boolean isStoreValid;
     private String comments;

@@ -7,7 +7,6 @@ import com.kosuri.stores.exception.APIException;
 import com.kosuri.stores.model.enums.Status;
 import com.kosuri.stores.model.enums.UserType;
 import com.kosuri.stores.model.request.*;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -68,7 +67,7 @@ public class RepositoryHandler {
 	private AdminStoreCategoryRepository adminStoreCategoryRepository;
 
 
-	public StoreEntity addStoreToRepository(@Valid StoreEntity storeEntity) throws Exception {
+	public StoreEntity addStoreToRepository(StoreEntity storeEntity) throws Exception {
 		Optional<StoreEntity> store = storeRepository.findById(storeEntity.getId());
 		Optional<UserOTPEntity> userOTPEntityOptional = userOTPRepository.findByUserEmailAndActive(storeEntity.getOwnerEmail(),1);
 		if (store.isPresent()) {
@@ -80,7 +79,7 @@ public class RepositoryHandler {
 
 	}
 
-	public StoreEntity updateStore(@Valid StoreEntity storeEntity) throws Exception {
+	public StoreEntity updateStore(StoreEntity storeEntity) throws Exception {
 		Optional<StoreEntity> store = storeRepository.findById(storeEntity.getId());
 
 		if (store.isEmpty()) {
@@ -91,7 +90,7 @@ public class RepositoryHandler {
 		return storeRepository.save(storeEntity);
 	}
 
-	public void addUser(@Valid StoreEntity storeEntity, AddUserRequest request) throws Exception {
+	public void addUser(StoreEntity storeEntity, AddUserRequest request) throws Exception {
 
 		Optional<RoleEntity> role = roleRepository.findByRoleName(request.getRole());
 		if (!role.isPresent()) {
@@ -135,7 +134,7 @@ public class RepositoryHandler {
 		return true;
 	}
 
-	public boolean addStoreUser(@Valid TabStoreUserEntity storeEntity, AddTabStoreUserRequest request) throws Exception {
+	public boolean addStoreUser(TabStoreUserEntity storeEntity, AddTabStoreUserRequest request) throws Exception {
 
 		Optional<RoleEntity> role = roleRepository.findByRoleName(request.getRole());
 
@@ -261,7 +260,7 @@ public class RepositoryHandler {
 		return false;
 	}
 
-	public boolean sendEmailOtp(@Valid OTPRequest request) {
+	public boolean sendEmailOtp(OTPRequest request) {
 		Optional<TabStoreUserEntity> tabStoreUserOptional = tabStoreRepository.findByStoreUserEmail(request.getEmail());
 		TabStoreUserEntity tabStoreUserEntity = tabStoreUserOptional.orElse(null);
 		if (null != tabStoreUserEntity &&
@@ -275,7 +274,7 @@ public class RepositoryHandler {
 	}
 
 
-	public boolean sendOtpToSMS(@Valid OTPRequest request) {
+	public boolean sendOtpToSMS(OTPRequest request) {
 		Optional<TabStoreUserEntity> tabStoreUserOptional = tabStoreRepository.findByStoreUserContact(request.getPhoneNumber());
 		TabStoreUserEntity tabStoreUserEntity = tabStoreUserOptional.orElse(null);
 		if (null != tabStoreUserEntity && null != tabStoreUserEntity.getUserType() &&

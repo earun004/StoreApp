@@ -5,7 +5,6 @@ import com.kosuri.stores.handler.DiagnosticHandler;
 import com.kosuri.stores.model.response.GenericResponse;
 import com.kosuri.stores.model.request.DiagnosticCenterRequest;
 import com.kosuri.stores.model.response.GetAllDiagnosticCentersResponse;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +18,7 @@ public class DiagnosticCenterController {
     private DiagnosticHandler diagnosticHandler;
 
     @PostMapping("/addDiagnosticCenter")
-    public ResponseEntity<GenericResponse> addUser(@Valid @RequestBody DiagnosticCenterRequest request) {
+    public ResponseEntity<GenericResponse> addUser(@RequestBody DiagnosticCenterRequest request) {
         HttpStatus httpStatus;
         GenericResponse response = new GenericResponse();
         boolean isDcAdded = false;
@@ -44,7 +43,7 @@ public class DiagnosticCenterController {
     }
 
     @PutMapping("/updateDiagnosticCenter")
-    public ResponseEntity<GenericResponse> updateDiagnosticCenter(@Valid @RequestBody DiagnosticCenterRequest request) {
+    public ResponseEntity<GenericResponse> updateDiagnosticCenter(@RequestBody DiagnosticCenterRequest request) {
         HttpStatus httpStatus;
         GenericResponse response = new GenericResponse();
         boolean isDcUpdated = false;

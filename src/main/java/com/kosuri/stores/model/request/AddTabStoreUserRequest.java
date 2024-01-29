@@ -1,11 +1,9 @@
 package com.kosuri.stores.model.request;
 
-import com.kosuri.stores.model.enums.Role;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.boot.convert.DataSizeUnit;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 
@@ -21,9 +19,9 @@ public class AddTabStoreUserRequest extends RequestEntity<AddTabStoreUserRequest
 
 
     private String userFullName;
-    @NotNull
+    @Nonnull
     private String userPhoneNumber;
-    @NotNull
+    @Nonnull
     private String userEmail;
 
     private String status;
@@ -38,7 +36,7 @@ public class AddTabStoreUserRequest extends RequestEntity<AddTabStoreUserRequest
 
     private String store;
 
-    @NotNull
+    @Nonnull
     private String password;
 
 	private String userType;

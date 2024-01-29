@@ -1,11 +1,10 @@
 package com.kosuri.stores.model.request;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 
 import java.net.URI;
-import java.util.Date;
 
 public class GenerateReportRequest extends RequestEntity<GenerateReportRequest> {
 
@@ -13,7 +12,7 @@ public class GenerateReportRequest extends RequestEntity<GenerateReportRequest> 
         super(method, url);
     }
 
-    @NotNull
+    @Nonnull
     private String storeId;
     private String vendorName;
     private String dateFrom;

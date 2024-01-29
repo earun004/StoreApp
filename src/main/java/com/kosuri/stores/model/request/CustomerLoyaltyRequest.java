@@ -1,13 +1,13 @@
 package com.kosuri.stores.model.request;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 
 public class CustomerLoyaltyRequest {
 
     private String firstName;
     private String lastName;
     private String customerPhone;
-    @NotNull
+    @Nonnull
     private String storeId;
 
     public String getLastName() {

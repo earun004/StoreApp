@@ -1,6 +1,6 @@
 package com.kosuri.stores.model.request;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,23 +19,23 @@ public class CreateStoreRequest extends RequestEntity<CreateStoreRequest> {
     }
 
     private String storeType;
-    @NotNull
+    @Nonnull
     private String id;
-    @NotNull
+    @Nonnull
     private String name;
-    @NotNull
+    @Nonnull
     private String pincode;
-    @NotNull
+    @Nonnull
     private String district;
     private String town;
-    @NotNull
+    @Nonnull
     private String state;
     private String owner;
     private String ownerAddress;
     private String ownerContact;
     private String secondaryContact;
     private String ownerEmail;
-    @NotNull
+    @Nonnull
     private String location;
     private String businessType;
     private String expirationDate;

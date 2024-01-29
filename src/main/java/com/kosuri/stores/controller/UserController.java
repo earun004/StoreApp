@@ -17,7 +17,6 @@ import com.kosuri.stores.model.response.GenericResponse;
 import com.kosuri.stores.model.response.LoginUserResponse;
 import com.kosuri.stores.model.response.OTPResponse;
 
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/user")
@@ -27,7 +26,7 @@ public class UserController {
 
 
 	@PostMapping("/add")
-	public ResponseEntity<GenericResponse> addUser(@Valid @RequestBody AddUserRequest request) {
+	public ResponseEntity<GenericResponse> addUser(@RequestBody AddUserRequest request) {
 		HttpStatus httpStatus;
 		GenericResponse response = new GenericResponse();
 		try {
@@ -46,7 +45,7 @@ public class UserController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<LoginUserResponse> login(@Valid @RequestBody LoginUserRequest request) {
+	public ResponseEntity<LoginUserResponse> login(@RequestBody LoginUserRequest request) {
 		HttpStatus httpStatus;
 		LoginUserResponse response = new LoginUserResponse();
 		String body;
@@ -65,7 +64,7 @@ public class UserController {
 	}
 
 	@PostMapping("/addstoreuser")
-	public ResponseEntity<GenericResponse> addUser(@Valid @RequestBody AddTabStoreUserRequest request) {
+	public ResponseEntity<GenericResponse> addUser( @RequestBody AddTabStoreUserRequest request) {
 		HttpStatus httpStatus;
 		GenericResponse response = new GenericResponse();
 		try {
@@ -113,7 +112,7 @@ public class UserController {
 
 	@PostMapping("/verifyForgetPassword")
 	public ResponseEntity<GenericResponse> verifyOTPAndChangePassword(
-			@Valid @RequestBody PasswordRequest request) {
+			@RequestBody PasswordRequest request) {
 		HttpStatus httpStatus;
 		GenericResponse response = new GenericResponse();
 		try {
@@ -132,7 +131,7 @@ public class UserController {
 	}
 
 	@PostMapping("/sendEmailOtp")
-	public ResponseEntity<OTPResponse> sendEmailOTP(@Valid @RequestBody OTPRequest request) {
+	public ResponseEntity<OTPResponse> sendEmailOTP(@RequestBody OTPRequest request) {
 		HttpStatus httpStatus;
 		OTPResponse response = new OTPResponse();
 		try {
@@ -151,7 +150,7 @@ public class UserController {
 	}
 
 	@PostMapping("/sendPhoneOtp")
-	public ResponseEntity<OTPResponse> sendPhoneOTP(@Valid @RequestBody OTPRequest request) {
+	public ResponseEntity<OTPResponse> sendPhoneOTP(@RequestBody OTPRequest request) {
 		HttpStatus httpStatus;
 		OTPResponse response = new OTPResponse();
 		try {
@@ -170,7 +169,7 @@ public class UserController {
 	}
 
 	@PostMapping("/verifyEmailOTP")
-	public ResponseEntity<GenericResponse> verifyEmailOTP(@Valid @RequestBody VerifyOTPRequest emailOtp) throws APIException{
+	public ResponseEntity<GenericResponse> verifyEmailOTP(@RequestBody VerifyOTPRequest emailOtp) throws APIException{
 		HttpStatus httpStatus;
 		GenericResponse response = new GenericResponse();
 		try {
@@ -194,7 +193,7 @@ public class UserController {
 	}
 
 	@PostMapping("/verifySmsOTP")
-	public ResponseEntity<GenericResponse> verifySMSOTP(@Valid @RequestBody VerifyOTPRequest smsOtp) {
+	public ResponseEntity<GenericResponse> verifySMSOTP(@RequestBody VerifyOTPRequest smsOtp) {
 		HttpStatus httpStatus;
 		GenericResponse response = new GenericResponse();
 		try {

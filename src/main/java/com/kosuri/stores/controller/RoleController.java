@@ -11,7 +11,6 @@ import com.kosuri.stores.model.response.GetTasksForRoleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +28,7 @@ public class RoleController {
     private TaskHandler taskHandler;
 
     @PostMapping("/add")
-    public ResponseEntity<GenericResponse> createRoleEntityFromRequest(@Valid @RequestBody CreateRoleRequest request) {
+    public ResponseEntity<GenericResponse> createRoleEntityFromRequest(@RequestBody CreateRoleRequest request) {
         GenericResponse response = new GenericResponse();
         try {
             roleHandler.createRoleEntityFromRequest(request.getRoleId(),request.getRoleName());
@@ -55,7 +54,7 @@ public class RoleController {
     }
 
     @PostMapping("/getTasks")
-    public ResponseEntity<GetTasksForRoleResponse> fetchAllTaskOfRole(@RequestBody @Valid GetTasksForRoleRequest request) {
+    public ResponseEntity<GetTasksForRoleResponse> fetchAllTaskOfRole(@RequestBody GetTasksForRoleRequest request) {
         try {
             GetTasksForRoleResponse response = taskHandler.fetchAllTaskOfRole(request);
             return ResponseEntity.status(HttpStatus.OK).body(response);

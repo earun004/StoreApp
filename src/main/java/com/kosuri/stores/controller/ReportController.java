@@ -3,13 +3,11 @@ package com.kosuri.stores.controller;
 import com.kosuri.stores.exception.APIException;
 import com.kosuri.stores.handler.ReportHandler;
 import com.kosuri.stores.model.request.GeneratePurchaseReportRequest;
-import com.kosuri.stores.model.request.GenerateReportRequest;
 import com.kosuri.stores.model.request.GenerateSaleReportRequest;
 import com.kosuri.stores.model.request.GenerateStockReportRequest;
 import com.kosuri.stores.model.response.GeneratePurchaseReportResponse;
 import com.kosuri.stores.model.response.GenerateSaleReportResponse;
 import com.kosuri.stores.model.response.GenerateStockReportResponse;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +22,7 @@ public class ReportController {
     @Autowired
     private ReportHandler reportHandler;
     @PostMapping("/generate/purchase")
-    public ResponseEntity<GeneratePurchaseReportResponse> generatePurchaseReport(@Valid @RequestBody GeneratePurchaseReportRequest request) throws Exception{
+    public ResponseEntity<GeneratePurchaseReportResponse> generatePurchaseReport(@RequestBody GeneratePurchaseReportRequest request) throws Exception{
         HttpStatus httpStatus;
         GeneratePurchaseReportResponse resp = new GeneratePurchaseReportResponse();
         try {
@@ -42,7 +40,7 @@ public class ReportController {
     }
 
     @PostMapping("/generate/sale")
-    public ResponseEntity<GenerateSaleReportResponse> generateSaleReport(@Valid @RequestBody GenerateSaleReportRequest request) throws Exception {
+    public ResponseEntity<GenerateSaleReportResponse> generateSaleReport(@RequestBody GenerateSaleReportRequest request) throws Exception {
         HttpStatus httpStatus;
         GenerateSaleReportResponse resp = new GenerateSaleReportResponse();
         try {
@@ -60,7 +58,7 @@ public class ReportController {
     }
 
     @PostMapping("/generate/stock")
-    public ResponseEntity<GenerateStockReportResponse> generateSaleReport(@Valid @RequestBody GenerateStockReportRequest request) throws Exception {
+    public ResponseEntity<GenerateStockReportResponse> generateSaleReport(@RequestBody GenerateStockReportRequest request) throws Exception {
         HttpStatus httpStatus;
         GenerateStockReportResponse resp = new GenerateStockReportResponse();
         try {

@@ -1,6 +1,6 @@
 package com.kosuri.stores.model.request;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,7 +19,7 @@ public class LoginUserRequest extends RequestEntity<LoginUserRequest> {
 
     private String email;
     private String phoneNumber;
-    @NotNull
+    @Nonnull
     private String password;
 
 }

@@ -5,7 +5,6 @@ import com.kosuri.stores.handler.PharmaHandler;
 import com.kosuri.stores.model.request.PharmasistRequest;
 import com.kosuri.stores.model.response.GenericResponse;
 import com.kosuri.stores.model.response.SearchResponse;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,7 @@ public class PharmacistController {
     private PharmaHandler pharmaHandler;
 
     @PostMapping("/addPharmacist")
-    public ResponseEntity<GenericResponse> addPharmacist(@Valid @RequestBody PharmasistRequest request) {
+    public ResponseEntity<GenericResponse> addPharmacist(@RequestBody PharmasistRequest request) {
         HttpStatus httpStatus;
         GenericResponse response = new GenericResponse();
         try {
@@ -44,7 +43,7 @@ public class PharmacistController {
     }
 
     @PutMapping("/updatePharmacist")
-    public ResponseEntity<GenericResponse> updatePharmacist(@Valid @RequestBody PharmasistRequest request) {
+    public ResponseEntity<GenericResponse> updatePharmacist(@RequestBody PharmasistRequest request) {
         HttpStatus httpStatus;
         GenericResponse response = new GenericResponse();
         try {

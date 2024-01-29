@@ -12,7 +12,6 @@ import com.kosuri.stores.model.request.UpdateStoreRequest;
 import com.kosuri.stores.model.response.CreateStoreResponse;
 import com.kosuri.stores.model.response.GetStoreRelatedResponse;
 import com.kosuri.stores.model.response.UpdateStoreResponse;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,7 +36,7 @@ public class StoreController {
 
 
     @PostMapping("/create")
-    ResponseEntity<CreateStoreResponse> createStore(@Valid @RequestBody CreateStoreRequest request) {
+    ResponseEntity<CreateStoreResponse> createStore(@RequestBody CreateStoreRequest request) {
         CreateStoreResponse createStoreResponse = new CreateStoreResponse();
         HttpStatus httpStatus;
         try {
@@ -142,7 +141,7 @@ public class StoreController {
     }
 
     @PostMapping("/update")
-    ResponseEntity<UpdateStoreResponse> updateStore(@Valid @RequestBody UpdateStoreRequest request) {
+    ResponseEntity<UpdateStoreResponse> updateStore(@RequestBody UpdateStoreRequest request) {
         HttpStatus httpStatus;
         UpdateStoreResponse updateStoreResponse = new UpdateStoreResponse();
 
