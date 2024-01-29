@@ -7,10 +7,12 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Setter
 @Getter
 @Entity
+@ToString
 @Table(name = "store_info")
 public class StoreEntity {
     private @Column(name = "Store_Category") String type;
@@ -38,4 +40,5 @@ public class StoreEntity {
     private @Column(name = "store_verified_status") String storeVerifiedStatus;
     private @Column(name = "`expiry date`") String expiryDate;
     private @Column(name = "current_plan") String currentPlan;
+    private @Column(name = "store_business_type") String storeBusinessType;
 }

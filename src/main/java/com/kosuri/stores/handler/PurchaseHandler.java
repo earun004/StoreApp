@@ -1,9 +1,6 @@
 package com.kosuri.stores.handler;
 
-import com.kosuri.stores.dao.PurchaseEntity;
-import com.kosuri.stores.dao.PurchaseRepository;
-import com.kosuri.stores.dao.StoreEntity;
-import com.kosuri.stores.dao.StoreRepository;
+import com.kosuri.stores.dao.*;
 import com.kosuri.stores.exception.APIException;
 import com.kosuri.stores.model.enums.StockUpdateRequestType;
 import com.kosuri.stores.model.request.StockUpdateRequest;
@@ -32,6 +29,9 @@ public class PurchaseHandler {
 
     @Autowired
     private StoreRepository storeRepository;
+
+    @Autowired
+    private RepositoryHandler repositoryHandler;
 
     @Transactional
     public void createPurchaseEntityFromRequest(MultipartFile reapExcelDataFile, String storeId, String emailId) throws Exception {
@@ -201,5 +201,9 @@ public class PurchaseHandler {
         stockUpdateRequest.setUpdatedBy(emailId);
 
         stockHandler.updateStock(stockUpdateRequest);
+    }
+
+    public List<StockEntity> searchStockByBusinessType(String storeId, String businessType) throws APIException{
+        return repositoryHandler.getStockRecordsByBusinessType(storeId, businessType);
     }
 }

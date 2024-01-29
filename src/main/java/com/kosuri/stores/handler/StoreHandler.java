@@ -158,8 +158,6 @@ public class StoreHandler {
 
         LocalDate currentDate = LocalDate.now();
 
-
-
         StoreEntity storeEntity = new StoreEntity();
         storeEntity.setName(createStoreRequest.getName());
         storeEntity.setId(createStoreRequest.getId());
@@ -194,9 +192,15 @@ public class StoreHandler {
         }
         storeEntity.setAddedBy(createStoreRequest.getOwner());
         storeEntity.setLocation(createStoreRequest.getLocation());
+        storeEntity.setStoreBusinessType(getBusinessStoreType(createStoreRequest.getBusinessType()));
         storeEntity.setStoreVerifiedStatus(createStoreRequest.getStoreVerificationStatus());
 
         return storeEntity;
+    }
+
+    private String getBusinessStoreType(String businessType) {
+        AdminStoreBusinessTypeEntity adminStoreBusinessType = repositoryHandler.getStoreBusinessTypeByName(businessType);
+        return adminStoreBusinessType.getBusinessTypeId();
     }
 
     private void setExpirationDateForStore(StoreEntity storeEntity, String storeCategory) {
@@ -315,14 +319,13 @@ public class StoreHandler {
                             .key(fileName)
                             .build();
 
-                    // Use try-with-resources to ensure the stream is closed
+
                     try (ResponseInputStream<GetObjectResponse> s3Object = s3Client.getObject(getObjectRequest)) {
                         ZipEntry zipEntry = new ZipEntry(fileName);
                         zos.putNextEntry(zipEntry);
-                        IOUtils.copy(s3Object, zos); // Use IOUtils from Apache Commons IO
+                        IOUtils.copy(s3Object, zos);
                         zos.closeEntry();
                     } catch (Exception e) {
-                        // Log and handle exception...
                         throw new APIException("Error While Downloading File: " + fileName);
                     }
                 }
@@ -387,5 +390,13 @@ public class StoreHandler {
             throw new APIException("Store with ID: " + adminStoreRequest.getStoreId() + " not found.");
         }
         return response;
+    }
+
+    public List<AdminStoreBusinessTypeEntity> getAllStoreBusinessTypes() throws APIException{
+        return repositoryHandler.getAllAdminStoreBusinessTypes();
+    }
+
+    public List<AdminStoreCategoryEntity> getAllStoreCategories() throws APIException{
+        return repositoryHandler.getAllAdminStoreCategories();
     }
 }

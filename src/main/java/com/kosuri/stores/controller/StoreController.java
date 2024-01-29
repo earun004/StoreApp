@@ -1,5 +1,7 @@
 package com.kosuri.stores.controller;
 
+import com.kosuri.stores.dao.AdminStoreBusinessTypeEntity;
+import com.kosuri.stores.dao.AdminStoreCategoryEntity;
 import com.kosuri.stores.dao.StoreEntity;
 import com.kosuri.stores.exception.APIException;
 import com.kosuri.stores.handler.RepositoryHandler;
@@ -8,7 +10,7 @@ import com.kosuri.stores.model.request.AdminStoreRequest;
 import com.kosuri.stores.model.request.CreateStoreRequest;
 import com.kosuri.stores.model.request.UpdateStoreRequest;
 import com.kosuri.stores.model.response.CreateStoreResponse;
-import com.kosuri.stores.model.response.GetAllStoreResponse;
+import com.kosuri.stores.model.response.GetStoreRelatedResponse;
 import com.kosuri.stores.model.response.UpdateStoreResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,43 +162,80 @@ public class StoreController {
     }
 
     @GetMapping("/all")
-    ResponseEntity<GetAllStoreResponse> getAllStores() {
+    ResponseEntity<GetStoreRelatedResponse> getAllStores() {
         HttpStatus httpStatus;
-        GetAllStoreResponse getAllStoreResponse = new GetAllStoreResponse();
+        GetStoreRelatedResponse getStoreRelatedResponse = new GetStoreRelatedResponse();
 
         try{
             List<StoreEntity> stores = storeHandler.getAllStores();
-            getAllStoreResponse.setStores(stores);
+            getStoreRelatedResponse.setStores(stores);
             httpStatus = HttpStatus.OK;
         } catch (APIException e) {
             httpStatus = HttpStatus.BAD_REQUEST;
-            getAllStoreResponse.setResponseMessage(e.getMessage());
+            getStoreRelatedResponse.setResponseMessage(e.getMessage());
         } catch (Exception e) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-            getAllStoreResponse.setResponseMessage(e.getMessage());
+            getStoreRelatedResponse.setResponseMessage(e.getMessage());
         }
-        return ResponseEntity.status(httpStatus).body(getAllStoreResponse);
+        return ResponseEntity.status(httpStatus).body(getStoreRelatedResponse);
     }
 
     @GetMapping("/storeDetails")
-    ResponseEntity<GetAllStoreResponse> getAllStoresByUserId(@RequestParam(value = "location", required = false) String location,
-                                                             @RequestParam(value = "userId", required = false) String userId,
-                                                             @RequestParam(value = "store_type", required = false) String storeType,
-                                                             @RequestParam(value = "added_date", required = false) String addedDate) throws APIException{
+    ResponseEntity<GetStoreRelatedResponse> getAllStoresByUserId(@RequestParam(value = "location", required = false) String location,
+                                                                 @RequestParam(value = "userId", required = false) String userId,
+                                                                 @RequestParam(value = "store_type", required = false) String storeType,
+                                                                 @RequestParam(value = "added_date", required = false) String addedDate) throws APIException{
         HttpStatus httpStatus;
-        GetAllStoreResponse getAllStoreResponse = new GetAllStoreResponse();
+        GetStoreRelatedResponse getStoreRelatedResponse = new GetStoreRelatedResponse();
 
         try{
             List<StoreEntity> stores = storeHandler.searchStores(location, userId, storeType, addedDate);
-            getAllStoreResponse.setStores(stores);
+            getStoreRelatedResponse.setStores(stores);
             httpStatus = HttpStatus.OK;
         } catch (APIException e) {
             httpStatus = HttpStatus.BAD_REQUEST;
-            getAllStoreResponse.setResponseMessage(e.getMessage());
+            getStoreRelatedResponse.setResponseMessage(e.getMessage());
         } catch (Exception e) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-            getAllStoreResponse.setResponseMessage(e.getMessage());
+            getStoreRelatedResponse.setResponseMessage(e.getMessage());
         }
-        return ResponseEntity.status(httpStatus).body(getAllStoreResponse);
+        return ResponseEntity.status(httpStatus).body(getStoreRelatedResponse);
+    }
+
+
+    @GetMapping("/getAllStoreBusinessTypes")
+    ResponseEntity<GetStoreRelatedResponse> getAllStoresBusinessTypes() throws APIException{
+        HttpStatus httpStatus;
+        GetStoreRelatedResponse getStoreRelatedResponse = new GetStoreRelatedResponse();
+        try{
+            List<AdminStoreBusinessTypeEntity> storeBusinessTypeList = storeHandler.getAllStoreBusinessTypes();
+            getStoreRelatedResponse.setStoreBusinessTypeList(storeBusinessTypeList);
+            httpStatus = HttpStatus.OK;
+        } catch (APIException e) {
+            httpStatus = HttpStatus.BAD_REQUEST;
+            getStoreRelatedResponse.setResponseMessage(e.getMessage());
+        } catch (Exception e) {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            getStoreRelatedResponse.setResponseMessage(e.getMessage());
+        }
+        return ResponseEntity.status(httpStatus).body(getStoreRelatedResponse);
+    }
+
+    @GetMapping("/getAllStoreCategories")
+    ResponseEntity<GetStoreRelatedResponse> getAllStoresCategories() throws APIException{
+        HttpStatus httpStatus;
+        GetStoreRelatedResponse getStoreRelatedResponse = new GetStoreRelatedResponse();
+        try{
+            List<AdminStoreCategoryEntity> storeCategoriesList = storeHandler.getAllStoreCategories();
+            getStoreRelatedResponse.setStoreCategoriesList(storeCategoriesList);
+            httpStatus = HttpStatus.OK;
+        } catch (APIException e) {
+            httpStatus = HttpStatus.BAD_REQUEST;
+            getStoreRelatedResponse.setResponseMessage(e.getMessage());
+        } catch (Exception e) {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            getStoreRelatedResponse.setResponseMessage(e.getMessage());
+        }
+        return ResponseEntity.status(httpStatus).body(getStoreRelatedResponse);
     }
 }

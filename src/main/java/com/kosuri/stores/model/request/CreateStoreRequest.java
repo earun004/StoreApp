@@ -37,6 +37,7 @@ public class CreateStoreRequest extends RequestEntity<CreateStoreRequest> {
     private String ownerEmail;
     @NotNull
     private String location;
+    private String businessType;
     private String expirationDate;
     private String storeVerificationStatus;
 }

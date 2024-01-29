@@ -14,6 +14,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -59,6 +60,12 @@ public class RepositoryHandler {
 
 	@Autowired
 	private AdminStoreVerificationRepository adminStoreVerificationRepository;
+
+	@Autowired
+	private AdminStoreBusinessTypeRepository adminStoreBusinessTypeRepository;
+
+	@Autowired
+	private AdminStoreCategoryRepository adminStoreCategoryRepository;
 
 
 	public StoreEntity addStoreToRepository(@Valid StoreEntity storeEntity) throws Exception {
@@ -427,5 +434,28 @@ public class RepositoryHandler {
 	public boolean saveAdminStoreVerificationEntity(AdminStoreVerificationEntity entity) {
 		AdminStoreVerificationEntity adminStoreVerification = adminStoreVerificationRepository.save(entity);
 		return true;
+	}
+
+	public AdminStoreBusinessTypeEntity getStoreBusinessTypeByName(String businessType) {
+		Optional<AdminStoreBusinessTypeEntity> adminStoreBusinessTypeEntity = adminStoreBusinessTypeRepository.findByBusinessName(businessType);
+		return adminStoreBusinessTypeEntity.orElse(null);
+	}
+
+	public List<AdminStoreBusinessTypeEntity> getAllAdminStoreBusinessTypes() {
+		return adminStoreBusinessTypeRepository.findAll();
+	}
+
+    public List<AdminStoreCategoryEntity> getAllAdminStoreCategories() {
+		return adminStoreCategoryRepository.findAll();
+	}
+
+	public List<StockEntity> getStockRecordsByBusinessType(String storeId, String businessType) {
+		Optional<StoreEntity> storeOptional = storeRepository.findByIdAndStoreBusinessType(storeId, businessType);
+		if (storeOptional.isPresent()) {
+			Optional<List<StockEntity>> stockListOptional =  stockRepository.findByStoreId(storeId);
+			return stockListOptional.orElse(Collections.emptyList());
+		} else {
+			return Collections.emptyList();
+		}
 	}
 }
