@@ -42,6 +42,7 @@ private StoreHandler storeHandler;
 
     private PrimaryCareEntity setEntityFromPrimaryCareRequest(PrimaryCareUserRequest request) {
         PrimaryCareEntity primaryEntity = new PrimaryCareEntity();
+        primaryEntity.setUserServiceId(request.getUserId()+"_"+request.getServiceId());
         primaryEntity.setServiceId(request.getServiceId());
         primaryEntity.setUserId(request.getUserId());
         primaryEntity.setServiceName(request.getServiceName());
