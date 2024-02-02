@@ -3,7 +3,9 @@ package com.kosuri.stores.handler;
 
 import com.kosuri.stores.dao.DiagnosticServiceRepository;
 import com.kosuri.stores.dao.DiagnosticServicesEntity;
+import com.kosuri.stores.exception.APIException;
 import com.kosuri.stores.model.request.DiagnosticCenterRequest;
+import com.kosuri.stores.model.response.GenericResponse;
 import com.kosuri.stores.model.response.GetAllDiagnosticCentersResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,19 +27,26 @@ public class DiagnosticHandler {
     @Autowired
     private StoreHandler storeHandler;
 
-    public boolean addDiagnosticCenter(DiagnosticCenterRequest request) throws Exception {
-        if (!repositoryHandler.isDCActive(request)){
-            return false;
+    public GenericResponse addDiagnosticCenter(List<DiagnosticCenterRequest> requests) throws Exception {
+        GenericResponse response = new GenericResponse();
+        for (DiagnosticCenterRequest request: requests){
+            if (!repositoryHandler.isDCActive(request)){
+                throw new APIException("Diagnostic Service is InActive");
+            }
+            DiagnosticServicesEntity diagnosticServicesEntity = getDiagnosticServicesEntityFromDiagnosticRequest(request, true);
+            int addCount = 0;
+            try {
+                 if(repositoryHandler.addDiagnosticCenter(diagnosticServicesEntity,request)){
+                     addCount++;
+                 }else{
+                     throw new APIException("Unable To Add Diagnostic Service..Issue While Adding "+request.getServiceId()+" Service");
+                 }
+            } catch (DataIntegrityViolationException e) {
+                throw new Exception(e.getCause().getCause().getMessage());
+            }
+            response.setResponseMessage("Diagnostic Services Add Successfully. Number Of Services Add:: "+ addCount);
         }
-
-        DiagnosticServicesEntity diagnosticServicesEntity = getDiagnosticServicesEntityFromDiagnosticRequest(request, true);
-        boolean isDcAdded = false;
-        try {
-           isDcAdded =  repositoryHandler.addDiagnosticCenter(diagnosticServicesEntity,request);
-        } catch (DataIntegrityViolationException e) {
-            throw new Exception(e.getCause().getCause().getMessage());
-        }
-        return isDcAdded;
+        return response;
     }
 
     private DiagnosticServicesEntity getDiagnosticServicesEntityFromDiagnosticRequest(DiagnosticCenterRequest request, boolean isDCActive) {

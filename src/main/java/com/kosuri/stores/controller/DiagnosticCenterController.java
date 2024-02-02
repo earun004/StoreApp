@@ -2,13 +2,15 @@ package com.kosuri.stores.controller;
 
 import com.kosuri.stores.exception.APIException;
 import com.kosuri.stores.handler.DiagnosticHandler;
-import com.kosuri.stores.model.response.GenericResponse;
 import com.kosuri.stores.model.request.DiagnosticCenterRequest;
+import com.kosuri.stores.model.response.GenericResponse;
 import com.kosuri.stores.model.response.GetAllDiagnosticCentersResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/diagnosticCenter")
@@ -18,19 +20,12 @@ public class DiagnosticCenterController {
     private DiagnosticHandler diagnosticHandler;
 
     @PostMapping("/addDiagnosticCenter")
-    public ResponseEntity<GenericResponse> addUser(@RequestBody DiagnosticCenterRequest request) {
+    public ResponseEntity<GenericResponse> addUser(@RequestBody List<DiagnosticCenterRequest> request) {
         HttpStatus httpStatus;
         GenericResponse response = new GenericResponse();
-        boolean isDcAdded = false;
         try {
-            isDcAdded =  diagnosticHandler.addDiagnosticCenter(request);
+            response =  diagnosticHandler.addDiagnosticCenter(request);
             httpStatus = HttpStatus.OK;
-            if (isDcAdded){
-                response.setResponseMessage("Diagnostic Center added successfully");
-            } else{
-                response.setResponseMessage("Unable To Add Diagnostic Center Cannot");
-            }
-
         } catch (APIException e) {
             httpStatus = HttpStatus.BAD_REQUEST;
             response.setResponseMessage(e.getMessage());

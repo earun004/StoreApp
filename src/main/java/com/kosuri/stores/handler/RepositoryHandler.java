@@ -288,7 +288,7 @@ public class RepositoryHandler {
 
 	public boolean addDiagnosticCenter(DiagnosticServicesEntity diagnosticServicesEntity, DiagnosticCenterRequest request) {
 		DiagnosticServicesEntity dcEntity = diagnosticServiceRepository.save(diagnosticServicesEntity);
-		return (null!=dcEntity);
+		return  (!ObjectUtils.isEmpty(dcEntity));
 	}
 
 	public boolean isDCActive(DiagnosticCenterRequest request) throws APIException {
