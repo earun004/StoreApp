@@ -324,7 +324,7 @@ public class RepositoryHandler {
 
 	public boolean addPrimaryCareCenter(PrimaryCareEntity primaryCareEntity, PrimaryCareUserRequest request) {
 		PrimaryCareEntity pcEntity = primaryCareCenterRepository.save(primaryCareEntity);
-		return (null != pcEntity);
+		return (!ObjectUtils.isEmpty(pcEntity));
 	}
 
 	public PrimaryCareEntity findPrimaryServiceById(String userServiceId) {

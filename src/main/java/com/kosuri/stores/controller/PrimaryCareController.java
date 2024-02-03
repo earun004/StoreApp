@@ -46,7 +46,7 @@ public class PrimaryCareController {
     }
 
     @PutMapping("/updatePrimaryCareCenter")
-    public ResponseEntity<GenericResponse> updateDiagnosticCenter(@RequestBody PrimaryCareUserRequest request) {
+    public ResponseEntity<GenericResponse> updatePrimaryCareCenter(@RequestBody PrimaryCareUserRequest request) {
         HttpStatus httpStatus;
         GenericResponse response = new GenericResponse();
         try {
