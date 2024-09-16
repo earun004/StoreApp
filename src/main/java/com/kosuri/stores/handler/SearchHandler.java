@@ -4,7 +4,6 @@ import com.kosuri.stores.dao.StockEntity;
 import com.kosuri.stores.dao.StockRepository;
 import com.kosuri.stores.dao.StoreEntity;
 import com.kosuri.stores.dao.StoreRepository;
-import com.kosuri.stores.model.Store;
 import com.kosuri.stores.model.search.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,13 +25,13 @@ public class SearchHandler {
 
         List<SearchResult> searchResultList = new ArrayList<>();
 
-        Optional<List<StoreEntity>> storeList = storeRepository.findByLocationContaining(location);
+        Optional<List<StoreEntity>> storeList = storeRepository.findByLocation(location);
         if (storeList.isPresent() && category.equalsIgnoreCase("medicine")) {
             for (StoreEntity storeEntity : storeList.get()) {
                 if (storeEntity.getId().contains("DUMMY")) {
                     continue;
                 }
-                List<StockEntity> availableStockEntity = stockRepository.findByItemNameContainingAndStoreIdAndBalQuantityGreaterThan(medicine,
+                List<StockEntity> availableStockEntity = stockRepository.findFirstByItemNameContainingAndStoreIdAndBalQuantityGreaterThan(medicine,
                         storeEntity.getId(), 0D);
 
                 for (StockEntity stockEntity : availableStockEntity) {

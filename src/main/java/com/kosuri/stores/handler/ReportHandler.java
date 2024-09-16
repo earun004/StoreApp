@@ -14,7 +14,6 @@ import com.kosuri.stores.model.response.GeneratePurchaseReportResponse;
 import com.kosuri.stores.model.response.GenerateSaleReportResponse;
 import com.kosuri.stores.model.response.GenerateStockReportResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -47,9 +46,9 @@ public class ReportHandler {
                 record.setBatchNo(purchaseEntity.getBatchNo());
                 record.setExpiryDate(formatter.format(purchaseEntity.getExpiryDate()));
                 record.setMfgDate(formatter.format(purchaseEntity.getDate()));
-                record.setMrp(purchaseEntity.getmRP());
+                record.setMrp(purchaseEntity.getMRP());
                 record.setDiscount(purchaseEntity.getDiscValue());
-                record.setGst(purchaseEntity.getcGSTAmt());
+                record.setGst(purchaseEntity.getCGSTAmt());
                 record.setPurchasePrice(purchaseEntity.getPurRate());
                 record.setPurchaseAmount(purchaseEntity.getPurValue());
 
@@ -77,11 +76,7 @@ public class ReportHandler {
     }
 
     private boolean validateVendorAndProduct(GenerateReportRequest request, String vendor, String productType){
-        boolean isValid = true;
-
-        if(request.getVendorName() != null && !request.getVendorName().isEmpty() && (vendor != null &&!vendor.equals(request.getVendorName()))){
-            isValid = false;
-        }
+        boolean isValid = request.getVendorName() == null || request.getVendorName().isEmpty() || (vendor == null || vendor.equals(request.getVendorName()));
 
         if (request.getProductType() != null && !request.getProductType().isEmpty() && (productType != null && !productType.equals(request.getProductType()))){
             isValid = false;

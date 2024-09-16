@@ -173,7 +173,7 @@ public class LoyaltyPointsHandler {
             
             List<Object[]> saleRecords = saleRepository.findTotalSalesForCustomerPhoneOrNameAndStoreIdAfterDate(request.getCustomerPhone(), name, lastDiscountedDate, request.getStoreId());
 
-            saleRecords.stream().filter(record -> cList.stream().noneMatch(customerEntity -> customerEntity.getCustomerPhone().equals((String)record[1]) && customerEntity.getCustomerName().equals((String)record[2])));
+            saleRecords.stream().filter(record -> cList.stream().noneMatch(customerEntity -> customerEntity.getCustomerPhone().equals(record[1]) && customerEntity.getCustomerName().equals(record[2])));
             responseList.addAll(getCustomerLoyaltyResponseList(saleRecords, storeLoyalty, request));
         }
 

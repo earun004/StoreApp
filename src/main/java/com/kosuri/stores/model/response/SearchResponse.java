@@ -1,18 +1,24 @@
 package com.kosuri.stores.model.response;
 
+import com.kosuri.stores.dao.PurchaseEntity;
+import com.kosuri.stores.dao.StockEntity;
+import com.kosuri.stores.model.search.PharmasistSearchResult;
 import com.kosuri.stores.model.search.SearchResult;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 public class SearchResponse extends GenericResponse {
+
     private List<SearchResult> searchResultList;
 
-    public List<SearchResult> getSearchResultList() {
-        return searchResultList;
-    }
+    private List<PharmasistSearchResult> pharmasistSearchResults;
 
-    public void setSearchResultList(List<SearchResult> searchResultList) {
-        this.searchResultList = searchResultList;
-    }
+    private List<PurchaseEntity> purchaseList;
+
+    private List<StockEntity> stockList;
 }
 

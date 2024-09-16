@@ -8,13 +8,24 @@ import java.util.Optional;
 
 @Repository
 public interface StoreRepository extends JpaRepository<StoreEntity, String> {
-    Boolean existsByOwnerEmail(String ownerEmail);
-    Boolean existsByOwnerContact(String ownerContact);
+
 
     Optional<List<StoreEntity>> findByOwnerEmail(String ownerEmail);
-    Optional<List<StoreEntity>> findByOwnerContact(String ownerContact);
 
     Optional<List<StoreEntity>> findByOwnerEmailOrOwnerContact(String ownerEmail, String ownerContact);
 
-    Optional<List<StoreEntity>> findByLocationContaining(String location);
+    Optional<List<StoreEntity>> findByLocation(String location);
+
+
+    Optional<StoreEntity> findByPincodeAndDistrictAndStateAndLocation(String pincode, String district, String state, String location);
+
+    Optional<StoreEntity> findById(String storeId);
+
+    List<StoreEntity> findByLocationAndType(String location, String type);
+    List<StoreEntity> findByOwnerEmailAndType(String ownerEmail, String type);
+    List<StoreEntity> findByRegistrationDate(String registrationDate);
+
+    Optional<StoreEntity> findByIdAndStoreBusinessType(String storeId, String businessType);
 }
+
+

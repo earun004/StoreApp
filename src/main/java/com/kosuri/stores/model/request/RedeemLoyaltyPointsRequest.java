@@ -1,12 +1,13 @@
 package com.kosuri.stores.model.request;
 
-import jakarta.validation.constraints.NotNull;
+
+import jakarta.annotation.Nonnull;
 
 import java.util.Date;
 
 public class RedeemLoyaltyPointsRequest {
 
-    @NotNull
+    @Nonnull
     private Date dateOfDiscount;
     private String firstName;
     private String lastName;
@@ -17,7 +18,7 @@ public class RedeemLoyaltyPointsRequest {
 
     private Integer loyaltyPoints;
 
-    @NotNull
+    @Nonnull
     private String storeId;
 
     public String getStoreId() {

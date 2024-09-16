@@ -1,13 +1,13 @@
 package com.kosuri.stores.model.response;
 
-public class GenericResponse {
-    public String getResponseMessage() {
-        return responseMessage;
-    }
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-    public void setResponseMessage(String responseMessage) {
-        this.responseMessage = responseMessage;
-    }
+@Getter
+@Setter
+@ToString
+public class GenericResponse {
 
     private String responseMessage;
 }

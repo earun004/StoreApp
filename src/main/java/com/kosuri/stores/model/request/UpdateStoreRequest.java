@@ -1,25 +1,25 @@
 package com.kosuri.stores.model.request;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 
 public class UpdateStoreRequest {
     private String storeType;
-    @NotNull
+    @Nonnull
     private String id;
-    @NotNull
+    @Nonnull
     private String name;
-    @NotNull
+    @Nonnull
     private String pincode;
 
-    @NotNull
+    @Nonnull
     private String status;
-    @NotNull
+    @Nonnull
     private String district;
 
-    @NotNull
+    @Nonnull
     private String location;
     private String town;
-    @NotNull
+    @Nonnull
     private String state;
     private String owner;
     private String ownerAddress;

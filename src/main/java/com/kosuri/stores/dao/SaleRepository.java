@@ -15,12 +15,12 @@ public interface SaleRepository  extends JpaRepository<SaleEntity, Integer> {
     Optional<List<SaleEntity>> findByStoreId(String storeId);
 
     @Query("Select sum(s.saleValue) from SaleEntity s where s.custName = ?1 and s.date > ?2")
-    public Double findTotalSalesForCustomerAfterDate(String customerName, Date date);
+    Double findTotalSalesForCustomerAfterDate(String customerName, Date date);
 
     @Query("Select sum(s.saleValue),s.mobile,s.custName from SaleEntity s where (s.mobile = ?1 or s.custName = ?2) and s.storeId = ?4 and s.date > ?3 group by s.mobile")
-    public List<Object[]> findTotalSalesForCustomerPhoneOrNameAndStoreIdAfterDate(String mobile, String customerName, Date date, String storeId);
+    List<Object[]> findTotalSalesForCustomerPhoneOrNameAndStoreIdAfterDate(String mobile, String customerName, Date date, String storeId);
 
     @Query("Select sum(s.saleValue),s.mobile,s.custName from SaleEntity s where (s.mobile = ?1 and s.custName = ?2) and s.storeId = ?4 and s.date > ?3 group by s.mobile")
-    public List<Object[]> findTotalSalesForCustomerPhoneAndNameAndStoreIdAfterDate(String mobile, String customerName, Date date, String storeId);
+    List<Object[]> findTotalSalesForCustomerPhoneAndNameAndStoreIdAfterDate(String mobile, String customerName, Date date, String storeId);
 }
 

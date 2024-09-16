@@ -3,18 +3,17 @@ package com.kosuri.stores.controller;
 import com.kosuri.stores.handler.RepositoryHandler;
 import com.kosuri.stores.handler.SaleHandler;
 import com.kosuri.stores.model.response.GenericResponse;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import java.io.IOException;
-
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 
 @RestController
@@ -26,7 +25,7 @@ public class SaleController {
     private SaleHandler saleHandler;
     @PostMapping("/import")
     public ResponseEntity<GenericResponse> mapReapExcelDatatoDB(@RequestParam("file") MultipartFile reapExcelDataFile,
-                                                                @NotNull @Valid @RequestParam("store_id") String storeId, @RequestParam("email_id") String emailId) {
+                                                                @Nonnull @RequestParam("store_id") String storeId, @RequestParam("email_id") String emailId) {
         GenericResponse response = new GenericResponse();
         try {
             saleHandler.createSaleEntityFromRequest(reapExcelDataFile, storeId, emailId);

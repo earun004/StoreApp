@@ -1,34 +1,16 @@
 package com.kosuri.stores.model.response;
 
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class LoginUserResponse extends GenericResponse {
-    private String roleName;
-    private String roleId;
 
-    private List<String> storeId;
+    private String userId;
+    private String userFullName;
+    private String userType;
+    private String userEmailAddress;
+    private String userContact;
 
-    public List<String> getStoreId() {
-        return storeId;
-    }
-
-    public void setStoreId(List<String> storeId) {
-        this.storeId = storeId;
-    }
-
-    public String getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
-    }
-
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
 }

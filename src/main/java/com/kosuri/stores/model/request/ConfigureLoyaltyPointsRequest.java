@@ -1,10 +1,11 @@
 package com.kosuri.stores.model.request;
 
-import jakarta.validation.constraints.NotNull;
+
+import jakarta.annotation.Nonnull;
 
 public class ConfigureLoyaltyPointsRequest {
 
-    @NotNull
+    @Nonnull
     private String storeId;
     private String storeCategory;
     private Integer loyaltyPoints;

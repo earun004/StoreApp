@@ -48,7 +48,7 @@ public class SaleHandler {
         for (int i = 1; i < worksheet.getPhysicalNumberOfRows(); i++) {
             SaleEntity tempSale = new SaleEntity();
             XSSFRow row = worksheet.getRow(i);
-            tempSale.setDoc_Number(String.valueOf(new BigDecimal(row.getCell(0).getNumericCellValue()).toBigInteger()));
+            tempSale.setDoc_Number(String.valueOf(BigDecimal.valueOf(row.getCell(0).getNumericCellValue()).toBigInteger()));
             tempSale.setReadableDocNo(row.getCell(1).getStringCellValue());
             tempSale.setDate(row.getCell(2).getDateCellValue());
             tempSale.setTime(row.getCell(3).getDateCellValue());
@@ -56,7 +56,7 @@ public class SaleHandler {
             tempSale.setCustName(row.getCell(5).getStringCellValue());
 
             tempSale.setPatientName(row.getCell(6).getStringCellValue());
-            tempSale.setCreatedUser(String.valueOf(new BigDecimal(row.getCell(7).getNumericCellValue()).toBigInteger()));
+            tempSale.setCreatedUser(String.valueOf(BigDecimal.valueOf(row.getCell(7).getNumericCellValue()).toBigInteger()));
             try {
                 tempSale.setItemCode(row.getCell(8).getStringCellValue());
             } catch (Exception e) {
@@ -71,7 +71,7 @@ public class SaleHandler {
             try {
                 tempSale.setBatchNo(row.getCell(10).getStringCellValue());
             } catch (Exception e) {
-                tempSale.setBatchNo(String.valueOf(new BigDecimal(row.getCell(10).getNumericCellValue()).toBigInteger()));
+                tempSale.setBatchNo(String.valueOf(BigDecimal.valueOf(row.getCell(10).getNumericCellValue()).toBigInteger()));
             }
             tempSale.setExpiryDate(row.getCell(11).getDateCellValue());
             tempSale.setMfacCode(row.getCell(12).getStringCellValue());
@@ -81,12 +81,12 @@ public class SaleHandler {
             tempSale.setBrandName(row.getCell(16).getStringCellValue());
             tempSale.setPacking(row.getCell(17).getStringCellValue());
             tempSale.setQtyBox(row.getCell(18).getNumericCellValue());
-            tempSale.setQty(new BigDecimal(row.getCell(19).getNumericCellValue()).doubleValue());
+            tempSale.setQty(BigDecimal.valueOf(row.getCell(19).getNumericCellValue()).doubleValue());
             tempSale.setSchQty((int) row.getCell(20).getNumericCellValue());
             tempSale.setSchDisc(row.getCell(21).getNumericCellValue());
             tempSale.setSaleRate(row.getCell(22).getNumericCellValue());
-            tempSale.setmRP(new BigDecimal(row.getCell(23).getNumericCellValue()).doubleValue());
-            tempSale.setSaleValue(new BigDecimal(row.getCell(24).getNumericCellValue()).doubleValue());
+            tempSale.setmRP(BigDecimal.valueOf(row.getCell(23).getNumericCellValue()).doubleValue());
+            tempSale.setSaleValue(BigDecimal.valueOf(row.getCell(24).getNumericCellValue()).doubleValue());
             tempSale.setDiscPerct(row.getCell(25).getNumericCellValue());
             tempSale.setDiscValue(row.getCell(26).getNumericCellValue());
             tempSale.setTaxableAmt(row.getCell(27).getNumericCellValue());
@@ -113,7 +113,7 @@ public class SaleHandler {
             tempSale.setProfessional(row.getCell(44).getStringCellValue());
 
 
-            tempSale.setMobile(String.valueOf(new BigDecimal(row.getCell(45).getNumericCellValue()).toBigInteger()));
+            tempSale.setMobile(String.valueOf(BigDecimal.valueOf(row.getCell(45).getNumericCellValue()).toBigInteger()));
             try {
                 tempSale.setLcCode(row.getCell(46).getStringCellValue());
             } catch (Exception e) {
